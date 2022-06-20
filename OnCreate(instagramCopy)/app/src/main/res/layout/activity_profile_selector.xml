@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProfileSelectorActivity">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/ivProfilePicture"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginEnd="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/defaultprofpic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_corner_radius="300dp"
+        app:riv_mutate_background="true"
+        app:riv_oval="false"
+        tools:src="@drawable/defaultprofpic"
+        tools:srcCompat="@drawable/defaultprofpic" />
+
+    <Button
+        android:id="@+id/btnProfImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="#9C27B0"
+        android:text="Select Profile Image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture" />
+
+    <Button
+        android:id="@+id/btnSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="35dp"
+        android:backgroundTint="#9C27B0"
+        android:text="Submit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btnProfImage"
+        app:layout_constraintTop_toBottomOf="@+id/ivProfilePicture" />
+</androidx.constraintlayout.widget.ConstraintLayout>
