@@ -179,3 +179,8 @@ GlobalIdea
     * (Update/PUT) up/downvote an existing
     * (Update/PUT) update the information on an existing user's idea
     * (Delete) delete an public idea
+
+## Gifs
+
+### Week 1:
+<img src='https://github.com/Kiopsy/onCreate/blob/master/onCreateWeek1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
