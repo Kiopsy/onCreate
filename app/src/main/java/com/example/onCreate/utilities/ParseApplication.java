@@ -2,6 +2,7 @@ package com.example.onCreate.utilities;
 
 import android.app.Application;
 
+import com.example.onCreate.models.Idea;
 import com.parse.Parse;
 import com.parse.ParseObject;
 

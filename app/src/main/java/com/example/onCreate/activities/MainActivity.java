@@ -23,6 +23,10 @@ import com.example.onCreate.activities.LoginActivity;
 //import com.example.instagram.fragments.Feed;
 //import com.example.instagram.fragments.createPost;
 //import com.example.instagram.models.Post;
+import com.example.onCreate.fragments.Brainstorm;
+import com.example.onCreate.fragments.GlobalFeed;
+import com.example.onCreate.fragments.PrivateFeed;
+import com.example.onCreate.fragments.Profile;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
@@ -46,26 +50,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setActionBarIcon();
-//
-//        // Bottom Navigation View listener
-//        bottomNavView = findViewById(R.id.bottom_navigation);
-//        bottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                Fragment fragment = null;
-//                switch (item.getItemId()) {
-//                    case R.id.menuCompose:
-//                        fragment = new createPost();
-//                        break;
-//                    case R.id.menuHome:
-//                        fragment = new Feed();
-//                        break;
-//                }
-//                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-//                return true;
-//            }
-//        });
-//        bottomNavView.setSelectedItemId(R.id.menuHome);
+
+        // Bottom Navigation View listener
+        bottomNavView = findViewById(R.id.bottom_navigation);
+        bottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
+                switch (item.getItemId()) {
+                    case R.id.menuBrainstorm:
+                        fragment = new Brainstorm();
+                        break;
+                    case R.id.menuGlobal:
+                        fragment = new GlobalFeed();
+                        break;
+                    case R.id.menuIdeas:
+                    fragment = new PrivateFeed();
+                        break;
+                    case R.id.menuProfile:
+                        fragment = new Profile();
+                        break;
+                }
+                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                return true;
+            }
+        });
+        bottomNavView.setSelectedItemId(R.id.menuIdeas);
     }
 
     @Override
@@ -93,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.white_on_create_logo);
+        actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);

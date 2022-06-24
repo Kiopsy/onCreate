@@ -3,12 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.5715" />
+        <entry key="app/src/main/res/drawable/bottom_nav_selector.xml" value="0.7115" />
+        <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
+        <entry key="app/src/main/res/drawable/layout_image_circle.xml" value="0.5885" />
+        <entry key="app/src/main/res/drawable/logo.xml" value="0.7685" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_private_idea_feed.xml" value="0.9369791666666667" />
-        <entry key="app/src/main/res/layout/activity_register.xml" value="0.67" />
-        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.9510416666666667" />
-        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.5802083333333333" />
+        <entry key="app/src/main/res/layout/activity_register.xml" value="0.12545289855072464" />
+        <entry key="app/src/main/res/layout/fragment_brainstorm.xml" value="0.6815551757812501" />
+        <entry key="app/src/main/res/layout/fragment_global_feed.xml" value="0.203125" />
+        <entry key="app/src/main/res/layout/fragment_private_feed.xml" value="0.4288247213779129" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/item_idea.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/item_private_idea.xml" value="0.4288247213779129" />
+        <entry key="app/src/main/res/menu/menu_bottom_nav.xml" value="0.203125" />
+        <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.5802083333333333" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.569" />
       </map>
@@ -19,5 +29,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.6815551757812501" />
+      </ProjectState>
+    </option>
   </component>
 </project>
