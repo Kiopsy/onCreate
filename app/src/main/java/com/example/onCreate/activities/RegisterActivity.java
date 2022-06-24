@@ -81,7 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
-    public void setActionBarIcon() {
+    private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.drawable.white_on_create_logo);
         actionBar.setDisplayUseLogoEnabled(true);

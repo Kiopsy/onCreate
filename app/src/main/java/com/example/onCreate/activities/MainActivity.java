@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setActionBarIcon() {
+    private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayUseLogoEnabled(true);
