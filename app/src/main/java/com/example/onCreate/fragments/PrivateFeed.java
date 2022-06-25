@@ -25,12 +25,12 @@ import java.util.List;
 
 public class PrivateFeed extends Fragment {
 
-    public static final String TAG = "PrivateFeedFragment";
-    private EndlessRecyclerViewScrollListener scrollListener;
-    private SwipeRefreshLayout swipeContainer;
-    protected RecyclerView rvPosts;
-    protected IdeaAdapter adapter;
-    protected List<Idea> ideas;
+    private static final String mTAG = "PrivateFeedFragment";
+    private EndlessRecyclerViewScrollListener mScrollListener;
+    private SwipeRefreshLayout mSwipeContainer;
+    private RecyclerView mRvPosts;
+    private IdeaAdapter mAdapter;
+    private List<Idea> mIdeas;
 
     public PrivateFeed() {
         // Required empty public constructor
@@ -46,50 +46,50 @@ public class PrivateFeed extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Find recycler view
-        rvPosts = view.findViewById(R.id.rvPosts);
+        mRvPosts = view.findViewById(R.id.rvPosts);
 
         // Init the list of tweets and adapter
-        ideas = new ArrayList<Idea>();
-        adapter = new IdeaAdapter(getContext(), ideas);
+        mIdeas = new ArrayList<Idea>();
+        mAdapter = new IdeaAdapter(getContext(), mIdeas, true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
         // Recycler view setup: layout manager and adapter
-        rvPosts.setLayoutManager(linearLayoutManager);
-        rvPosts.setAdapter(adapter);
+        mRvPosts.setLayoutManager(linearLayoutManager);
+        mRvPosts.setAdapter(mAdapter);
 
         // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        mScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
-                Idea lastPost = ideas.get(ideas.size() - 1);
+                Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
                 loadNextData(lastPost.getCreatedAt());
             }
         };
 
         // Adds the scroll listener to RecyclerView
-        rvPosts.addOnScrollListener(scrollListener);
+        mRvPosts.addOnScrollListener(mScrollListener);
 
         // Refreshing swipe layout
         // Lookup the swipe container view
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+        mSwipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                adapter.clear();
+                mAdapter.clear();
                 queryPosts();
-                swipeContainer.setRefreshing(false);
+                mSwipeContainer.setRefreshing(false);
             }
         });
 
         // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+        mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -98,7 +98,7 @@ public class PrivateFeed extends Fragment {
         queryPosts();
     }
 
-    public void loadNextData(Date date) {
+    private void loadNextData(Date date) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
@@ -115,18 +115,18 @@ public class PrivateFeed extends Fragment {
             public void done(List<Idea> feed, com.parse.ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
+                    Log.e(mTAG, "Issue with getting posts", e);
                     return;
                 }
 
                 // for debugging purposes let's print every post description to logcat
                 for (Idea idea : feed) {
-                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
+                    Log.i(mTAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
                 }
 
                 // save received posts to list and notify adapter of new data
-                ideas.addAll(feed);
-                adapter.notifyDataSetChanged();
+                mIdeas.addAll(feed);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -147,18 +147,18 @@ public class PrivateFeed extends Fragment {
             public void done(List<Idea> feed, com.parse.ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
+                    Log.e(mTAG, "Issue with getting posts", e);
                     return;
                 }
 
                 // for debugging purposes let's print every post description to logcat
                 for (Idea idea : feed) {
-                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
+                    Log.i(mTAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
                 }
 
                 // save received posts to list and notify adapter of new data
-                ideas.addAll(feed);
-                adapter.notifyDataSetChanged();
+                mIdeas.addAll(feed);
+                mAdapter.notifyDataSetChanged();
             }
         });
     }

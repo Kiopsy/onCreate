@@ -13,7 +13,6 @@ public class ParseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-
         // Register your parse models
         ParseObject.registerSubclass(Idea.class);
 

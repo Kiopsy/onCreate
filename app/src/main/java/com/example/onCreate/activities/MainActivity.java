@@ -40,23 +40,22 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BottomNavigationView bottomNavView;
+    private BottomNavigationView mBottomNavView;
+    private final FragmentManager mFragmentManager = getSupportFragmentManager();
     private final int REQUEST_CODE = 20;
-    final FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setActionBarIcon();
-
-        // Bottom Navigation View listener
-        bottomNavView = findViewById(R.id.bottom_navigation);
-        bottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+        // Bottom navigation bar setup & view listener
+        mBottomNavView = findViewById(R.id.bottom_navigation);
+        mBottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
+                // Accounting for all fragments
                 switch (item.getItemId()) {
                     case R.id.menuBrainstorm:
                         fragment = new Brainstorm();
@@ -71,11 +70,14 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new Profile();
                         break;
                 }
-                fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                 return true;
             }
         });
-        bottomNavView.setSelectedItemId(R.id.menuIdeas);
+        // Set menuIdeas as home screen fragment
+        mBottomNavView.setSelectedItemId(R.id.menuIdeas);
+
+        setActionBarIcon();
     }
 
     @Override
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Action bar for the screen that shows onCreate logo
     private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.drawable.logo);

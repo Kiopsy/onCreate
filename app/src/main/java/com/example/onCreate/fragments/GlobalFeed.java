@@ -50,7 +50,7 @@ public class GlobalFeed extends Fragment {
 
         // Init the list of tweets and adapter
         ideas = new ArrayList<Idea>();
-        adapter = new IdeaAdapter(getContext(), ideas);
+        adapter = new IdeaAdapter(getContext(), ideas, true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 

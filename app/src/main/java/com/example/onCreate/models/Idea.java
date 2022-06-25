@@ -9,7 +9,7 @@ import com.parse.ParseUser;
 
 import java.util.Date;
 
-@ParseClassName("GlobalIdea")
+@ParseClassName("Idea")
 public class Idea extends ParseObject {
 
     public static final String KEY_DESCRIPTION = "description";
@@ -19,7 +19,7 @@ public class Idea extends ParseObject {
     public static final String KEY_UPVOTES = "upvotes";
     public static final String KEY_DOWNVOTES = "downvotes";
     public static final String KEY_STARRED = "starred";
-    public static final String KEY_VISIBILITY = "isPrivated";
+    public static final String KEY_VISIBILITY = "isPrivate";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);

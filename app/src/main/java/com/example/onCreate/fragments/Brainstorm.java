@@ -98,6 +98,7 @@ public class Brainstorm extends Fragment {
         Idea idea = new Idea();
         idea.setDescription(description);
         idea.setUser(currentUser);
+        idea.setVisibility(true);
         idea.setTitle(title);
         if (photoFile != null) {
             idea.setImage(bitmapToParseFile(photoFile));

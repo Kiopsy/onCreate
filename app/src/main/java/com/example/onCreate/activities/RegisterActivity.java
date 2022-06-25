@@ -18,11 +18,11 @@ import com.parse.SignUpCallback;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    public static final String TAG = "RegisterActivity";
-    private EditText etUsername;
-    private EditText etPassword;
-    private EditText etEmail;
-    private Button btnSignup;
+    private static final String TAG = "RegisterActivity";
+    private EditText mEtUsername;
+    private EditText mEtPassword;
+    private EditText mEtEmail;
+    private Button mBtnSignup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +31,19 @@ public class RegisterActivity extends AppCompatActivity {
 
         setActionBarIcon();
 
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        etEmail = findViewById(R.id.etEmail);
-        btnSignup = findViewById(R.id.btnSignup);
+        mEtUsername = findViewById(R.id.etUsername);
+        mEtPassword = findViewById(R.id.etPassword);
+        mEtEmail = findViewById(R.id.etEmail);
+        mBtnSignup = findViewById(R.id.btnSignup);
 
         // Set signup button onClick Listener
-        btnSignup.setOnClickListener(new View.OnClickListener() {
+        mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick signup button");
-                String username = etUsername.getText().toString();
-                String password = etPassword.getText().toString();
-                String email = etEmail.getText().toString();
+                String username = mEtUsername.getText().toString();
+                String password = mEtPassword.getText().toString();
+                String email = mEtEmail.getText().toString();
                 signupUser(username, password, email);
             }
         });
@@ -81,9 +81,10 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
+    // Setting up action bar & onCreate logo
     private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.white_on_create_logo);
+        actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
