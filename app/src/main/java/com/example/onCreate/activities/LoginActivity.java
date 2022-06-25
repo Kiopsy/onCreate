@@ -20,11 +20,11 @@ import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String TAG = "LoginActivity";
-    private TextInputLayout etUsername;
-    private TextInputLayout etPassword;
-    private Button btnLogin;
-    private Button btnSignup;
+    public static final String mTAG = "LoginActivity";
+    private TextInputLayout mEtUsername;
+    private TextInputLayout mEtPassword;
+    private Button mBtnLogin;
+    private Button mBtnSignup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,28 +37,28 @@ public class LoginActivity extends AppCompatActivity {
             goMainActivity();
         }
 
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnSignup = findViewById(R.id.btnSignup);
+        mEtUsername = findViewById(R.id.etUsername);
+        mEtPassword = findViewById(R.id.etPassword);
+        mBtnLogin = findViewById(R.id.btnLogin);
+        mBtnSignup = findViewById(R.id.btnSignup);
 
         // Set login button onClick Listener
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick login button");
-                String username = etUsername.getEditText().getText().toString();
-                String password = etPassword.getEditText().getText().toString();
+                Log.i(mTAG, "onClick login button");
+                String username = mEtUsername.getEditText().getText().toString();
+                String password = mEtPassword.getEditText().getText().toString();
 
                 loginUser(username, password);
             }
         });
 
         // Set signup button onClick listener
-        btnSignup.setOnClickListener(new View.OnClickListener() {
+        mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick signup button");
+                Log.i(mTAG, "onClick signup button");
                 goSignUpActivity();
             }
         });
@@ -66,13 +66,13 @@ public class LoginActivity extends AppCompatActivity {
 
     // Login using parse
     private void loginUser(String username, String password) {
-        Log.i(TAG, "Attempting to login user" + username);
+        Log.i(mTAG, "Attempting to login user" + username);
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 // Check if login was successful
                 if (e != null) {
-                    Log.e(TAG, "Issue with login", e);
+                    Log.e(mTAG, "Issue with login", e);
                     Toast.makeText(LoginActivity.this, "Issue with login!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -95,9 +95,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    // Action bar and logo setup
     private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
-//        actionBar.setIcon(R.drawable.white_on_create_logo);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);

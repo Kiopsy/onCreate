@@ -12,15 +12,15 @@ https://guides.codepath.org/android/Endless-Scrolling-with-AdapterViews-and-Recy
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
     // before loading more.
-    private int visibleThreshold = 5;
+    private int mVisibleThreshold = 5;
     // The current offset index of data you have loaded
-    private int currentPage = 0;
+    private int mCurrentPage = 0;
     // The total number of items in the dataset after the last load
-    private int previousTotalItemCount = 0;
+    private int mPreviousTotalItemCount = 0;
     // True if we are still waiting for the last set of data to load.
-    private boolean loading = true;
+    private boolean mLoading = true;
     // Sets the starting page index
-    private int startingPageIndex = 0;
+    private int mStartingPageIndex = 0;
 
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -30,12 +30,12 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
     public EndlessRecyclerViewScrollListener(GridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
-        visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
+        mVisibleThreshold = mVisibleThreshold * layoutManager.getSpanCount();
     }
 
     public EndlessRecyclerViewScrollListener(StaggeredGridLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
-        visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
+        mVisibleThreshold = mVisibleThreshold * layoutManager.getSpanCount();
     }
 
     public int getLastVisibleItem(int[] lastVisibleItemPositions) {
@@ -71,37 +71,37 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state
-        if (totalItemCount < previousTotalItemCount) {
-            this.currentPage = this.startingPageIndex;
-            this.previousTotalItemCount = totalItemCount;
+        if (totalItemCount < mPreviousTotalItemCount) {
+            this.mCurrentPage = this.mStartingPageIndex;
+            this.mPreviousTotalItemCount = totalItemCount;
             if (totalItemCount == 0) {
-                this.loading = true;
+                this.mLoading = true;
             }
         }
         // If it’s still loading, we check to see if the dataset count has
         // changed, if so we conclude it has finished loading and update the current page
         // number and total item count.
-        if (loading && (totalItemCount > previousTotalItemCount)) {
-            loading = false;
-            previousTotalItemCount = totalItemCount;
+        if (mLoading && (totalItemCount > mPreviousTotalItemCount)) {
+            mLoading = false;
+            mPreviousTotalItemCount = totalItemCount;
         }
 
         // If it isn’t currently loading, we check to see if we have breached
         // the visibleThreshold and need to reload more data.
         // If we do need to reload some more data, we execute onLoadMore to fetch the data.
         // threshold should reflect how many total columns there are too
-        if (!loading && (lastVisibleItemPosition + visibleThreshold) > totalItemCount) {
-            currentPage++;
-            onLoadMore(currentPage, totalItemCount, view);
-            loading = true;
+        if (!mLoading && (lastVisibleItemPosition + mVisibleThreshold) > totalItemCount) {
+            mCurrentPage++;
+            onLoadMore(mCurrentPage, totalItemCount, view);
+            mLoading = true;
         }
     }
 
     // Call this method whenever performing new searches
     public void resetState() {
-        this.currentPage = this.startingPageIndex;
-        this.previousTotalItemCount = 0;
-        this.loading = true;
+        this.mCurrentPage = this.mStartingPageIndex;
+        this.mPreviousTotalItemCount = 0;
+        this.mLoading = true;
     }
 
     // Defines the process for actually loading more data based on page

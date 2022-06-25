@@ -36,15 +36,15 @@ import java.io.IOException;
 
 public class Brainstorm extends Fragment {
 
-    private EditText etTitle;
-    private EditText etDescription;
-    private Button btnSubmit;
-    private ImageView ivMedia;
-    private ImageView ivPostImage;
-    private Switch switchPrivateGlobal;
-    private Bitmap selectedImage;
+    private EditText mEtTitle;
+    private EditText mEtDescription;
+    private Button mBtnSubmit;
+    private ImageView mIvMedia;
+    private ImageView mIvPostImage;
+    private Switch mSwitchPrivateGlobal;
+    private Bitmap mSelectedImage;
     public final static int PICK_PHOTO_CODE = 1046;
-    public final static String TAG = "Brainstorming Fragment";
+    public final static String mTAG = "Brainstorming Fragment";
 
     public Brainstorm () {
         // Required empty constructor
@@ -59,13 +59,13 @@ public class Brainstorm extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        etTitle = view.findViewById(R.id.etTitle);
-        etDescription = view.findViewById(R.id.etDescription);
-        btnSubmit = view.findViewById(R.id.btnSubmit);
-        ivMedia = view.findViewById(R.id.ivMedia);
-        ivPostImage = view.findViewById(R.id.ivPostImage);
+        mEtTitle = view.findViewById(R.id.etTitle);
+        mEtDescription = view.findViewById(R.id.etDescription);
+        mBtnSubmit = view.findViewById(R.id.btnSubmit);
+        mIvMedia = view.findViewById(R.id.ivMedia);
+        mIvPostImage = view.findViewById(R.id.ivPostImage);
 
-        ivMedia.setOnClickListener(new View.OnClickListener() {
+        mIvMedia.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -73,11 +73,11 @@ public class Brainstorm extends Fragment {
             }
         });
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String description = etDescription.getText().toString();
-                String title = etTitle.getText().toString();
+                String description = mEtDescription.getText().toString();
+                String title = mEtTitle.getText().toString();
                 if (description.isEmpty()) {
                     Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
@@ -88,7 +88,7 @@ public class Brainstorm extends Fragment {
                 }
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, title, currentUser, selectedImage);
+                savePost(description, title, currentUser, mSelectedImage);
                 goMainActivity();
             }
         });
@@ -107,18 +107,18 @@ public class Brainstorm extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(TAG, "error while saving", e);
+                    Log.e(mTAG, "error while saving", e);
                     Toast.makeText(getContext(), "error while saving", Toast.LENGTH_SHORT).show();
                 }
-                Log.i(TAG, "Post save was successful");
-                etDescription.setText("");
-                ivPostImage.setImageResource(0);
+                Log.i(mTAG, "Post save was successful");
+                mEtDescription.setText("");
+                mIvPostImage.setImageResource(0);
             }
         });
     }
 
     // Trigger gallery selection for a photo
-    public void onPickPhoto(View view) {
+    private void onPickPhoto(View view) {
         // Create intent for picking a photo from the gallery
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -126,7 +126,7 @@ public class Brainstorm extends Fragment {
     }
 
     // converts a bitmap to a ParseFile
-    public ParseFile bitmapToParseFile(Bitmap image) {
+    private ParseFile bitmapToParseFile(Bitmap image) {
         ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
         byte[] imageByte = byteArrayOutputStream.toByteArray();
@@ -134,7 +134,7 @@ public class Brainstorm extends Fragment {
         return parseFile;
     }
 
-    public Bitmap loadFromUri(Uri photoUri) {
+    private Bitmap loadFromUri(Uri photoUri) {
         Bitmap image = null;
         try {
             // check version of Android on device
@@ -153,16 +153,16 @@ public class Brainstorm extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    private void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
 
             // Load the image located at photoUri into selectedImage
-            selectedImage = loadFromUri(photoUri);
+            mSelectedImage = loadFromUri(photoUri);
 
             // Load the selected image into a preview
-            ivPostImage.setImageBitmap(selectedImage);
+            mIvPostImage.setImageBitmap(mSelectedImage);
         }
     }
 
