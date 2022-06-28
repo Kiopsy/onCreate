@@ -65,6 +65,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     // Define a ViewHolder to connect UI with Backend
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        // TODO: is m a suitable prefix for these views?
         TextView mTvTitle;
         TextView mTvDescription;
         TextView mTvTime;
