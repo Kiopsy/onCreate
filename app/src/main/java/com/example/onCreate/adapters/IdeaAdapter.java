@@ -30,12 +30,10 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     private boolean mIsPrivateFeed;
     private final String mTAG = "IdeaAdapter";
 
-    // Pass in context and list of tweets
+    // Pass in context, list of ideas, and a bool to distinguish whether adapter is used for global vs private feeds
     public IdeaAdapter(Context context, List<Idea> ideas, boolean isPrivateFeed) {
         this.mContext = context;
         this.mIdeas = ideas;
-
-        // Used to determine whether adapter is for private vs global feed
         this.mIsPrivateFeed = isPrivateFeed;
     }
 

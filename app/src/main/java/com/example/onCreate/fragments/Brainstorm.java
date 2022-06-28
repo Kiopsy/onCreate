@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.onCreate.R;
@@ -31,7 +30,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 
 
@@ -44,8 +42,10 @@ public class Brainstorm extends Fragment {
     private ImageView mIvPostImage;
     private RadioGroup mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
-    public final static int PICK_PHOTO_CODE = 1046;
-    public final static String mTAG = "Brainstorming Fragment";
+    private final static int PICK_PHOTO_CODE = 1046;
+    private final static int mMAX_DESCRIPTION_LENGTH = 140;
+    private final static int mMAX_TITLE_LENGTH = 35;
+    private final static String mTAG = "Brainstorming Fragment";
 
     public Brainstorm () {
         // Required empty constructor
@@ -67,43 +67,57 @@ public class Brainstorm extends Fragment {
         mIvPostImage = view.findViewById(R.id.ivPostImage);
         mSwitchPrivateGlobal = view.findViewById(R.id.switchPrivateGlobal);
 
+        // Button to choose an image from the phone gallery
         mIvMedia.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 onPickPhoto(v);
             }
         });
 
+        // Button to submit the idea post using input data
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Getting text from description & title
+                // Description input and variants
                 String description = mEtDescription.getText().toString();
-                String title = mEtTitle.getText().toString();
                 if (description.isEmpty()) {
                     Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                if (description.length() > mMAX_DESCRIPTION_LENGTH) {
+                    Toast.makeText(getContext(), "Sorry, your description is too long", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Title input and variants
+                String title = mEtTitle.getText().toString();
                 if (title.isEmpty()) {
                     Toast.makeText(getContext(), "title cannot be empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (title.length() > mMAX_TITLE_LENGTH) {
+                    Toast.makeText(getContext(), "Sorry, your title is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 // Differentiating between private and global posts using Radio group/buttons
                 int index = mSwitchPrivateGlobal.indexOfChild(view.findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
 
-                // index == 0 : private
-                // index == 1 : global
+                // Feed selection: index == 0 -> private ; index == 1 -> global
                 boolean isPrivate = index == 0 ? true : false;
 
                 ParseUser currentUser = ParseUser.getCurrentUser();
+
+                // Publishes input data to database
                 savePost(description, title, currentUser, mSelectedImage, isPrivate);
+                // Goes to home screen after submission
                 goMainActivity();
             }
         });
     }
 
+    // Function to create and update an idea model, and post to Parse
     private void savePost(String description, String title, ParseUser currentUser, Bitmap photoFile, boolean isPrivate) {
         Idea idea = new Idea();
         idea.setDescription(description);
@@ -111,10 +125,11 @@ public class Brainstorm extends Fragment {
         idea.setVisibility(true);
         idea.setTitle(title);
         idea.setVisibility(isPrivate);
-        // Setting upvotes if global
+
+        // Setting starting upvotes if global
         if (!isPrivate) {
             // A user starts by initially upvoting their own post
-            idea.add("upvoteUsers", currentUser);
+            idea.add(Idea.KEY_ARRAY_UPVOTE, currentUser);
             idea.setUpvotes(1);
             idea.setDownvotes(0);
         }
@@ -122,6 +137,7 @@ public class Brainstorm extends Fragment {
         if (photoFile != null) {
             idea.setImage(bitmapToParseFile(photoFile));
         }
+
         idea.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
