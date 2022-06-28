@@ -103,6 +103,8 @@ public class PrivateFeed extends Fragment {
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
         query.include(Idea.KEY_USER);
+        // find only private posts
+        query.whereEqualTo("isPrivate", true);
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
@@ -137,6 +139,8 @@ public class PrivateFeed extends Fragment {
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
         query.include(Idea.KEY_USER);
+        // find only private posts
+        query.whereEqualTo("isPrivate", true);
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)

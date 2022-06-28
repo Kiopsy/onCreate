@@ -7,8 +7,10 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+// An idea object that is the foundation of a post in onCreate();
 @ParseClassName("Idea")
 public class Idea extends ParseObject {
 
@@ -20,6 +22,8 @@ public class Idea extends ParseObject {
     public static final String KEY_DOWNVOTES = "downvotes";
     public static final String KEY_STARRED = "starred";
     public static final String KEY_VISIBILITY = "isPrivate";
+    public static final String KEY_ARRAY_UPVOTE = "upvoteUsers";
+    public static final String KEY_ARRAY_DOWNVOTE = "downvoteUsers";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -45,14 +49,6 @@ public class Idea extends ParseObject {
         put(KEY_USER, user);
     }
 
-    public int getUpvotes() { return getInt(KEY_UPVOTES); }
-
-    public void setUpvotes(int upvotes) { put(KEY_UPVOTES, upvotes); }
-
-    public int getDownvotes() { return getInt(KEY_DOWNVOTES); }
-
-    public void setDownvotes(int downvotes) { put(KEY_DOWNVOTES, downvotes); }
-
     public String getTitle() {
         return getString(KEY_TITLE);
     }
@@ -60,6 +56,14 @@ public class Idea extends ParseObject {
     public void setTitle(String title) {
         put(KEY_TITLE, title);
     }
+
+    public int getUpvotes() { return getInt(KEY_UPVOTES); }
+
+    public void setUpvotes(int upvotes) { put(KEY_UPVOTES, upvotes); }
+
+    public int getDownvotes() { return getInt(KEY_DOWNVOTES); }
+
+    public void setDownvotes(int downvotes) { put(KEY_DOWNVOTES, downvotes); }
 
     public boolean getStarred() {
         return getBoolean(KEY_STARRED);
@@ -73,9 +77,17 @@ public class Idea extends ParseObject {
         return getBoolean(KEY_VISIBILITY);
     }
 
-    public void setVisibility(boolean isPrivated) {
-        put(KEY_VISIBILITY, isPrivated);
+    public void setVisibility(boolean isPrivate) {
+        put(KEY_VISIBILITY, isPrivate);
     }
+
+    public ArrayList<ParseUser> getUpvoteUsers() { return (ArrayList) get(KEY_ARRAY_UPVOTE); }
+
+    public void setUpvoteUsers(ArrayList<ParseUser> users) { put(KEY_ARRAY_UPVOTE, users); }
+
+    public ArrayList<ParseUser> getDownvoteUsers() { return (ArrayList) get(KEY_ARRAY_DOWNVOTE); }
+
+    public void setDownvoteUsers(ArrayList<ParseUser> users) { put(KEY_ARRAY_DOWNVOTE, users); }
 
     public static String calculateTimeAgo(Date createdAt) {
 

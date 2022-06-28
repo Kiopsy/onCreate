@@ -18,7 +18,7 @@ import com.parse.SignUpCallback;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String TAG = "RegisterActivity";
+    private static final String mTAG = "RegisterActivity";
     private EditText mEtUsername;
     private EditText mEtPassword;
     private EditText mEtEmail;
@@ -29,8 +29,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        setActionBarIcon();
-
         mEtUsername = findViewById(R.id.etUsername);
         mEtPassword = findViewById(R.id.etPassword);
         mEtEmail = findViewById(R.id.etEmail);
@@ -40,18 +38,21 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick signup button");
+                Log.i(mTAG, "onClick signup button");
                 String username = mEtUsername.getText().toString();
                 String password = mEtPassword.getText().toString();
                 String email = mEtEmail.getText().toString();
                 signupUser(username, password, email);
             }
         });
+
+        // Set up logo in action bar
+        setActionBarIcon();
     }
 
     // Create a new Parse
     private void signupUser(String username, String password, String email) {
-        Log.i(TAG, "Attempting to create user: " + username);
+        Log.i(mTAG, "Attempting to create user: " + username);
 
         // Create the ParseUser & set core properties
         ParseUser user = new ParseUser();
@@ -64,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void done(ParseException e) {
                 // Check if signup was successful
                 if (e != null) {
-                    Log.e(TAG, "Issue with creating an account", e);
+                    Log.e(mTAG, "Issue with creating an account", e);
                     Toast.makeText(RegisterActivity.this, "Issue with signup!", Toast.LENGTH_SHORT).show();
                     return;
                 }

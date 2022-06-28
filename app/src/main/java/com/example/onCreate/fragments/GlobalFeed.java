@@ -50,7 +50,7 @@ public class GlobalFeed extends Fragment {
 
         // Init the list of tweets and adapter
         ideas = new ArrayList<Idea>();
-        adapter = new IdeaAdapter(getContext(), ideas, true);
+        adapter = new IdeaAdapter(getContext(), ideas, false);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -103,6 +103,8 @@ public class GlobalFeed extends Fragment {
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
         query.include(Idea.KEY_USER);
+        // find only private posts
+        query.whereEqualTo("isPrivate", false);
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
@@ -139,6 +141,8 @@ public class GlobalFeed extends Fragment {
         query.include(Idea.KEY_USER);
         // limit query to latest 20 items
         query.setLimit(20);
+        // find only private posts
+        query.whereEqualTo("isPrivate", false);
         // order posts by creation date (newest first)
         query.addDescendingOrder("createdAt");
         // start an asynchronous call for posts

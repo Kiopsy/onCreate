@@ -20,7 +20,7 @@ import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String mTAG = "LoginActivity";
+    private static final String mTAG = "LoginActivity";
     private TextInputLayout mEtUsername;
     private TextInputLayout mEtPassword;
     private Button mBtnLogin;
@@ -31,8 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        setActionBarIcon();
-
+        // Check if there is a current user session
         if (ParseUser.getCurrentUser() != null) {
             goMainActivity();
         }
@@ -49,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(mTAG, "onClick login button");
                 String username = mEtUsername.getEditText().getText().toString();
                 String password = mEtPassword.getEditText().getText().toString();
-
                 loginUser(username, password);
             }
         });
@@ -62,6 +60,9 @@ public class LoginActivity extends AppCompatActivity {
                 goSignUpActivity();
             }
         });
+
+        // Set up logo in action bar
+        setActionBarIcon();
     }
 
     // Login using parse

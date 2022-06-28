@@ -1,7 +1,6 @@
 package com.example.onCreate.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +17,10 @@ import com.example.onCreate.R;
 import com.example.onCreate.models.Idea;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
@@ -42,7 +43,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.item_private_idea, parent, false);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.item_idea, parent, false);
         return new ViewHolder(view);
     }
 
@@ -95,6 +96,8 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mTvDescription.setText(idea.getDescription());
             mTvTitle.setText(idea.getTitle()); mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
 
+            ParseUser currentUser = ParseUser.getCurrentUser();
+
             // Display different feeds based on whether feed is private vs global
             if (mIsPrivateFeed) {
                 // Set visibility for private feed views
@@ -110,20 +113,109 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mIvUpvote.setVisibility(View.VISIBLE);
                 mTvVotes.setVisibility(View.VISIBLE);
                 mIvDownvote.setVisibility(View.VISIBLE);
-                mTvVotes.setVisibility(View.GONE);
+                mIvStars.setVisibility(View.GONE);
+
 
                 // Set functionality for global feed
-                // mIvUpvote.setSelected(idea.get);
+                ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
+                ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+
+                boolean isUpvoteSelected = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                mIvUpvote.setSelected(isUpvoteSelected);
+
+                boolean isDownvoteSelected = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
+                mIvDownvote.setSelected(isDownvoteSelected);
+
                 mTvVotes.setText(Integer.toString(idea.getUpvotes() - idea.getDownvotes()));
             }
 
-            // Image click listeners
+            // Starring an idea
             mIvStars.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     boolean star = !idea.getStarred();
                     idea.setStarred(star);
                     mIvStars.setSelected(star);
+                    idea.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.e(mTAG, "error while saving", e);
+                                Toast.makeText(mContext, "error while saving", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.i(mTAG, "Post save was successful");
+                        }
+                    });
+                }
+            });
+
+            // Upvoting a global post
+            mIvUpvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Check if current user is already upvoted on the post
+                    ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
+                    ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+                    boolean hasInteracted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                    int upvotes = idea.getUpvotes();
+                    int downvotes = idea.getDownvotes();
+
+                    if (hasInteracted) {
+                        // Un-upvote a post: remove current user from upvote list and change the upvote count
+                        idea.setUpvoteUsers(removeUser(upvoteUsers, currentUser));
+                        upvotes--;
+                        idea.setUpvotes(upvotes);
+                    } else {
+                        // Upvote a post: add current user to upvote list and change the upvote count
+                        idea.add("upvoteUsers", currentUser);
+                        upvotes++;
+                        idea.setUpvotes(upvotes);
+                    }
+
+                    // Change upvote text & image based on previous interaction
+                    mIvUpvote.setSelected(!hasInteracted);
+                    mTvVotes.setText(Integer.toString(upvotes - downvotes));
+
+                    idea.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e != null) {
+                                Log.e(mTAG, "error while saving", e);
+                                Toast.makeText(mContext, "error while saving", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.i(mTAG, "Post save was successful");
+                        }
+                    });
+                }
+            });
+
+            // Downvoting a global post
+            mIvDownvote.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Check if current user is already downvoted on the post
+                    ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
+                    ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+                    boolean hasInteracted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;;
+                    int upvotes = idea.getUpvotes();
+                    int downvotes = idea.getDownvotes();
+
+                    if (hasInteracted) {
+                        // Un-upvote a post: remove current user from upvote list and change the upvote count
+                        idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
+                        downvotes--;
+                        idea.setDownvotes(downvotes);
+                    } else {
+                        // Upvote a post: add current user to upvote list and change the upvote count
+                        idea.add("downvoteUsers", currentUser);
+                        downvotes++;
+                        idea.setDownvotes(downvotes);
+                    }
+
+                    // Change upvote text & image based on previous interaction
+                    mIvDownvote.setSelected(!hasInteracted);
+                    mTvVotes.setText(Integer.toString(upvotes - downvotes));
+
                     idea.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -163,6 +255,28 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 //                context.startActivity(intent);
 //            }
         }
+    }
+
+    // Checks if an array of ParseUsers contains a specific user
+    private boolean containsUser (ArrayList<ParseUser> allUsers, ParseUser user) {
+        String userId = user.getObjectId();
+        for (ParseUser u :allUsers) {
+            if (u.getObjectId().equals(userId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Remove a user from a list of ParseUsers by Object id
+    private ArrayList<ParseUser> removeUser(ArrayList<ParseUser> allUsers, ParseUser user) {
+        String userId = user.getObjectId();
+        for (ParseUser u :allUsers) {
+            if (u.getObjectId().equals(userId)) {
+               allUsers.remove(u);
+            }
+        }
+        return allUsers;
     }
 
     // Clean all elements of the recycler

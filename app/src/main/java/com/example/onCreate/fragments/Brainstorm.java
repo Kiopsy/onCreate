@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -41,7 +42,7 @@ public class Brainstorm extends Fragment {
     private Button mBtnSubmit;
     private ImageView mIvMedia;
     private ImageView mIvPostImage;
-    private Switch mSwitchPrivateGlobal;
+    private RadioGroup mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
     public final static int PICK_PHOTO_CODE = 1046;
     public final static String mTAG = "Brainstorming Fragment";
@@ -64,6 +65,7 @@ public class Brainstorm extends Fragment {
         mBtnSubmit = view.findViewById(R.id.btnSubmit);
         mIvMedia = view.findViewById(R.id.ivMedia);
         mIvPostImage = view.findViewById(R.id.ivPostImage);
+        mSwitchPrivateGlobal = view.findViewById(R.id.switchPrivateGlobal);
 
         mIvMedia.setOnClickListener(new View.OnClickListener() {
 
@@ -76,6 +78,7 @@ public class Brainstorm extends Fragment {
         mBtnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Getting text from description & title
                 String description = mEtDescription.getText().toString();
                 String title = mEtTitle.getText().toString();
                 if (description.isEmpty()) {
@@ -87,19 +90,35 @@ public class Brainstorm extends Fragment {
                     return;
                 }
 
+                // Differentiating between private and global posts using Radio group/buttons
+                int index = mSwitchPrivateGlobal.indexOfChild(view.findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
+
+                // index == 0 : private
+                // index == 1 : global
+                boolean isPrivate = index == 0 ? true : false;
+
                 ParseUser currentUser = ParseUser.getCurrentUser();
-                savePost(description, title, currentUser, mSelectedImage);
+                savePost(description, title, currentUser, mSelectedImage, isPrivate);
                 goMainActivity();
             }
         });
     }
 
-    private void savePost(String description, String title, ParseUser currentUser, Bitmap photoFile) {
+    private void savePost(String description, String title, ParseUser currentUser, Bitmap photoFile, boolean isPrivate) {
         Idea idea = new Idea();
         idea.setDescription(description);
         idea.setUser(currentUser);
         idea.setVisibility(true);
         idea.setTitle(title);
+        idea.setVisibility(isPrivate);
+        // Setting upvotes if global
+        if (!isPrivate) {
+            // A user starts by initially upvoting their own post
+            idea.add("upvoteUsers", currentUser);
+            idea.setUpvotes(1);
+            idea.setDownvotes(0);
+        }
+
         if (photoFile != null) {
             idea.setImage(bitmapToParseFile(photoFile));
         }
@@ -153,7 +172,7 @@ public class Brainstorm extends Fragment {
     }
 
     @Override
-    private void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
             Uri photoUri = data.getData();
