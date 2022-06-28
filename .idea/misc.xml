@@ -13,7 +13,7 @@
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_private_idea_feed.xml" value="0.9369791666666667" />
-        <entry key="app/src/main/res/layout/activity_register.xml" value="0.12545289855072464" />
+        <entry key="app/src/main/res/layout/activity_register.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_brainstorm.xml" value="0.6815551757812501" />
         <entry key="app/src/main/res/layout/fragment_global_feed.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_private_feed.xml" value="0.4288247213779129" />
