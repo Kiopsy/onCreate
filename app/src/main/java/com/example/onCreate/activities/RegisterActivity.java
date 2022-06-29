@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
                 String generalDescription = mEtGeneralDescription.getText().toString();
 
                 // TODO: SET CONSTRAINTS FOR INPUT HERE
-                
+
                 signupUser(username, password, email, jobDescription, generalDescription);
             }
         });
