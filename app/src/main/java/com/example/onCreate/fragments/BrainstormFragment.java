@@ -33,7 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 
-public class Brainstorm extends Fragment {
+public class BrainstormFragment extends Fragment {
 
     private EditText mEtTitle;
     private EditText mEtDescription;
@@ -47,7 +47,7 @@ public class Brainstorm extends Fragment {
     private final static int mMAX_TITLE_LENGTH = 35;
     private final static String mTAG = "Brainstorming Fragment";
 
-    public Brainstorm () {
+    public BrainstormFragment() {
         // Required empty constructor
     }
 

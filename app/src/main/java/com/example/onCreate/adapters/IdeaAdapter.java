@@ -1,6 +1,8 @@
 package com.example.onCreate.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
 import com.example.onCreate.models.Idea;
+import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -114,6 +117,13 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mIvDownvote.setVisibility(View.VISIBLE);
                 mIvStars.setVisibility(View.GONE);
 
+                // Only allow users to delete their own posts
+                if (idea.getUser().getObjectId().equals(currentUser.getObjectId())) {
+                    mIvTrash.setVisibility(View.VISIBLE);
+                } else {
+                    mIvTrash.setVisibility(View.GONE);
+                }
+
 
                 // Set functionality for global feed
                 ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
@@ -155,11 +165,11 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                     // Check if current user is already upvoted on the post
                     ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
                     ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
-                    boolean hasInteracted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                    boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
                     int upvotes = idea.getUpvotes();
                     int downvotes = idea.getDownvotes();
 
-                    if (hasInteracted) {
+                    if (hasUpvoted) {
                         // Un-upvote a post: remove current user from upvote list and change the upvote count
                         idea.setUpvoteUsers(removeUser(upvoteUsers, currentUser));
                         upvotes--;
@@ -172,7 +182,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                     }
 
                     // Change upvote text & image based on previous interaction
-                    mIvUpvote.setSelected(!hasInteracted);
+                    mIvUpvote.setSelected(!hasUpvoted);
                     mTvVotes.setText(Integer.toString(upvotes - downvotes));
 
                     idea.saveInBackground(new SaveCallback() {
@@ -228,6 +238,14 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 }
             });
 
+            mIvTrash.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog diaBox = AskOption(idea);
+                    diaBox.show();
+                }
+            });
+
             // Post description
             ParseFile image = idea.getImage();
             if (image != null) {
@@ -273,9 +291,49 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         for (ParseUser u :allUsers) {
             if (u.getObjectId().equals(userId)) {
                allUsers.remove(u);
+               break;
             }
         }
         return allUsers;
+    }
+
+    private AlertDialog AskOption(Idea idea) {
+        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(mContext)
+                // set message, title, and icon
+                .setTitle("Delete")
+                .setMessage("Are you sure you want to delete?")
+                .setIcon(R.drawable.ic_trashcan)
+
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        mIdeas.remove(idea);
+                        idea.deleteInBackground(new DeleteCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                // inside done method checking if the error is null or not.
+                                if (e == null) {
+                                    // if the error is not null then we are displaying a toast message and opening our home activity.
+                                    Toast.makeText(mContext, "POST Deleted", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                    notifyDataSetChanged();
+                                } else {
+                                    // if we get error we are displaying it in below line.
+                                    Toast.makeText(mContext, "Fail to delete course..", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+
+        return myQuittingDialogBox;
     }
 
     // Clean all elements of the recycler

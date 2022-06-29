@@ -18,9 +18,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.onCreate.R;
+import com.google.android.material.textfield.TextInputLayout;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import java.io.ByteArrayOutputStream;
@@ -28,13 +30,13 @@ import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private static final String mTAG = "RegisterActivity";
+    private static final String TAG = "RegisterActivity";
     private ImageView mIvProfilePicture;
-    private EditText mEtUsername;
-    private EditText mEtPassword;
-    private EditText mEtEmail;
-    private EditText mEtJobDescription;
-    private EditText mEtGeneralDescription;
+    private TextInputLayout mEtUsername;
+    private TextInputLayout mEtPassword;
+    private TextInputLayout mEtEmail;
+    private TextInputLayout mEtJobDescription;
+    private TextInputLayout mEtGeneralDescription;
     private Button mBtnProfPic;
     private Button mBtnSignup;
     private Bitmap selectedImage;
@@ -66,12 +68,12 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(mTAG, "onClick signup button");
-                String username = mEtUsername.getText().toString();
-                String password = mEtPassword.getText().toString();
-                String email = mEtEmail.getText().toString();
-                String jobDescription = mEtJobDescription.getText().toString();
-                String generalDescription = mEtGeneralDescription.getText().toString();
+                Log.i(TAG, "onClick signup button");
+                String username = mEtUsername.getEditText().getText().toString();
+                String password = mEtPassword.getEditText().getText().toString();
+                String email = mEtEmail.getEditText().getText().toString();
+                String jobDescription = mEtJobDescription.getEditText().getText().toString();
+                String generalDescription = mEtGeneralDescription.getEditText().getText().toString();
 
                 // TODO: SET CONSTRAINTS FOR INPUT HERE
 
@@ -83,9 +85,9 @@ public class RegisterActivity extends AppCompatActivity {
         setActionBarIcon();
     }
 
-    // Create a new Parse
+    // Create a new Parse User
     private void signupUser(String username, String password, String email, String jobDescription, String generalDescription) {
-        Log.i(mTAG, "Attempting to create user: " + username);
+        Log.i(TAG, "Attempting to create user: " + username);
 
         // Create the ParseUser & set core properties
         ParseUser user = new ParseUser();
@@ -94,14 +96,34 @@ public class RegisterActivity extends AppCompatActivity {
         user.setEmail(email);
         user.put("jobDescription", jobDescription);
         user.put("generalDescription", generalDescription);
-        user.put("profileImage", bitmapToParseFile(selectedImage));
+        ParseFile photoFile = bitmapToParseFile(selectedImage);
+        // Ensure profile photo is saved before signing up
+        photoFile.saveInBackground(new SaveCallback() {
+            public void done(ParseException e) {
+                // Check if signup was successful
+                if (e != null) {
+                    Log.e(TAG, "Issue saving profile picture", e);
+                    Toast.makeText(RegisterActivity.this, "Issue with profile photo!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                user.put("profileImage", photoFile);
+                // finish signing up user
+                signupUser(user);
+                Toast.makeText(RegisterActivity.this, "success", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Finish signing up Parse User
+    private void signupUser(ParseUser user) {
+        Log.i(TAG, "Attempting to signup user: " + user.getUsername());
 
         // Invoke signUpInBackground
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 // Check if signup was successful
                 if (e != null) {
-                    Log.e(mTAG, "Issue with creating an account", e);
+                    Log.e(TAG, "Issue with signing up an account", e);
                     Toast.makeText(RegisterActivity.this, "Issue with signup!", Toast.LENGTH_SHORT).show();
                     return;
                 }

@@ -12,10 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.onCreate.R;
-import com.example.onCreate.fragments.Brainstorm;
-import com.example.onCreate.fragments.GlobalFeed;
-import com.example.onCreate.fragments.PrivateFeed;
-import com.example.onCreate.fragments.Profile;
+import com.example.onCreate.fragments.BrainstormFragment;
+import com.example.onCreate.fragments.GlobalFeedFragment;
+import com.example.onCreate.fragments.PrivateFeedFragment;
+import com.example.onCreate.fragments.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
@@ -38,16 +38,16 @@ public class MainActivity extends AppCompatActivity {
                 // Accounting for all fragments/screens
                 switch (item.getItemId()) {
                     case R.id.menuBrainstorm:
-                        fragment = new Brainstorm();
+                        fragment = new BrainstormFragment();
                         break;
                     case R.id.menuGlobal:
-                        fragment = new GlobalFeed();
+                        fragment = new GlobalFeedFragment();
                         break;
                     case R.id.menuIdeas:
-                        fragment = new PrivateFeed();
+                        fragment = new PrivateFeedFragment();
                         break;
                     case R.id.menuProfile:
-                        fragment = new Profile();
+                        fragment = new ProfileFragment();
                         break;
                 }
                 mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
