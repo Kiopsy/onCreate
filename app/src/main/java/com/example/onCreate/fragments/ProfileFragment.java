@@ -1,6 +1,5 @@
 package com.example.onCreate.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,16 +8,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
 import com.example.onCreate.models.Idea;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -33,7 +30,6 @@ public class ProfileFragment extends Fragment {
     private TextView mTvKarma;
     private TextView mTvIdeas;
     private ImageView mIvProfilePicture;
-    private List<Idea> mAllPosts;
     private final static String TAG = "Profile Fragment";
 
     public ProfileFragment() {
@@ -58,17 +54,16 @@ public class ProfileFragment extends Fragment {
 
         // Setting profile text descriptions from ParseUser
         ParseUser currentUser = ParseUser.getCurrentUser();
-        mTvName.setText("Victor Goncalves");
+        mTvName.setText(currentUser.getString("name"));
         mTvJobDescription.setText(currentUser.getString("jobDescription"));
         mTvGeneralDescription.setText(currentUser.getString("generalDescription"));
 
-        // Query for all users posts in order to find karma and idea count
-        queryPosts();
-
-        // Calculate and set karma and idea count
-        mTvKarma.setText(Integer.toString(getKarmaCount(currentUser)));
-        mTvIdeas.setText(Integer.toString(getIdeaCount(currentUser)));
-
+        // Setting the count labels for karma and ideas
+        try {
+            setCountLabels();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         // Setting Profile image
         ParseFile profImage = currentUser.getParseFile("profileImage");
         if (profImage != null) {
@@ -76,12 +71,23 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // Calculates users's total global karma
-    private int getKarmaCount(ParseUser user) {
+    // Calculates user's total global karma and number of ideas
+    private void setCountLabels() throws ParseException {
+        // Query for all users posts in order to find karma and idea count
+        ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
+        query.include(Idea.KEY_USER);
+        query.whereEqualTo("user", ParseUser.getCurrentUser());
+        List<Idea> feed = query.find();
+        mTvKarma.setText(Integer.toString(getKarmaCount(feed)));
+        mTvIdeas.setText(Integer.toString(getIdeaCount(feed)));
+    }
+
+    // Calculates user's total karma post count
+    private int getKarmaCount(List<Idea> allPosts) {
         int karma = 0;
-        if (mAllPosts != null) {
+        if (allPosts != null) {
             // Iterate through all user's
-            for (Idea idea : mAllPosts) {
+            for (Idea idea : allPosts) {
                 // Only global posts can contribute to karma
                 if (!idea.getVisibility()) {
                     karma += idea.getUpvotes() - idea.getDownvotes();
@@ -92,38 +98,11 @@ public class ProfileFragment extends Fragment {
     }
 
     // Calculates user's total idea post count
-    private int getIdeaCount(ParseUser user) {
-        if (mAllPosts != null) {
-            return mAllPosts.size();
+    private int getIdeaCount(List<Idea> allPosts) {
+        if (allPosts != null) {
+            return allPosts.size();
         } else {
             return 0;
         }
-    }
-
-    // Use Parse to query for all of the user's posts
-    private List<Idea> queryPosts() {
-        // specify what type of data we want to query - Post.class
-        ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
-        // include data referred by user key
-        query.include(Idea.KEY_USER);
-        // find all user's posts
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        // order posts by creation date (newest first)
-        query.findInBackground(new FindCallback<Idea>() {
-            @Override
-            public void done(List<Idea> feed, com.parse.ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
-
-                // for debugging purposes let's print every post description to logcat
-                for (Idea idea : feed) {
-                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
-                }
-                mAllPosts = feed;
-            }
-        });
     }
 }

@@ -35,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputLayout mEtUsername;
     private TextInputLayout mEtPassword;
     private TextInputLayout mEtEmail;
+    private TextInputLayout mEtName;
     private TextInputLayout mEtJobDescription;
     private TextInputLayout mEtGeneralDescription;
     private Button mBtnProfPic;
@@ -51,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
         mEtUsername = findViewById(R.id.etUsername);
         mEtPassword = findViewById(R.id.etPassword);
         mEtEmail = findViewById(R.id.etEmail);
+        mEtName = findViewById(R.id.etName);
         mEtJobDescription = findViewById(R.id.etJobDescription);
         mEtGeneralDescription = findViewById(R.id.etGeneralDescription);
         mBtnProfPic = findViewById(R.id.btnProfImage);
@@ -72,12 +74,13 @@ public class RegisterActivity extends AppCompatActivity {
                 String username = mEtUsername.getEditText().getText().toString();
                 String password = mEtPassword.getEditText().getText().toString();
                 String email = mEtEmail.getEditText().getText().toString();
+                String name = mEtName.getEditText().getText().toString();
                 String jobDescription = mEtJobDescription.getEditText().getText().toString();
                 String generalDescription = mEtGeneralDescription.getEditText().getText().toString();
 
                 // TODO: SET CONSTRAINTS FOR INPUT HERE
 
-                signupUser(username, password, email, jobDescription, generalDescription);
+                signupUser(username, password, email, name, jobDescription, generalDescription);
             }
         });
 
@@ -86,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     // Create a new Parse User
-    private void signupUser(String username, String password, String email, String jobDescription, String generalDescription) {
+    private void signupUser(String username, String password, String email, String name, String jobDescription, String generalDescription) {
         Log.i(TAG, "Attempting to create user: " + username);
 
         // Create the ParseUser & set core properties
@@ -94,6 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);
+        user.put("name", name);
         user.put("jobDescription", jobDescription);
         user.put("generalDescription", generalDescription);
         ParseFile photoFile = bitmapToParseFile(selectedImage);

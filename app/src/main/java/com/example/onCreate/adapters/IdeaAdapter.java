@@ -166,19 +166,23 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                     ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
                     ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
                     boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                    boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
                     int upvotes = idea.getUpvotes();
                     int downvotes = idea.getDownvotes();
 
                     if (hasUpvoted) {
                         // Un-upvote a post: remove current user from upvote list and change the upvote count
-                        idea.setUpvoteUsers(removeUser(upvoteUsers, currentUser));
+                        unUpvote(idea, currentUser, downvoteUsers);
                         upvotes--;
-                        idea.setUpvotes(upvotes);
                     } else {
                         // Upvote a post: add current user to upvote list and change the upvote count
-                        idea.add("upvoteUsers", currentUser);
+                        if (hasDownvoted) {
+                            unDownvote(idea, currentUser, upvoteUsers);
+                            downvotes--;
+                            mIvDownvote.setSelected(false);
+                        }
+                        upvote(idea, currentUser, downvoteUsers);
                         upvotes++;
-                        idea.setUpvotes(upvotes);
                     }
 
                     // Change upvote text & image based on previous interaction
@@ -205,24 +209,28 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                     // Check if current user is already downvoted on the post
                     ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
                     ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
-                    boolean hasInteracted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;;
+                    boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                    boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
                     int upvotes = idea.getUpvotes();
                     int downvotes = idea.getDownvotes();
 
-                    if (hasInteracted) {
-                        // Un-upvote a post: remove current user from upvote list and change the upvote count
-                        idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
+                    if (hasDownvoted) {
+                        // Un-downvote a post: remove current user from upvote list and change the upvote count
+                        unDownvote(idea, currentUser, downvoteUsers);
                         downvotes--;
-                        idea.setDownvotes(downvotes);
                     } else {
-                        // Upvote a post: add current user to upvote list and change the upvote count
-                        idea.add("downvoteUsers", currentUser);
+                        // Downvote a post: add current user to upvote list and change the upvote count
+                        if (hasUpvoted) {
+                            unUpvote(idea, currentUser, upvoteUsers);
+                            upvotes--;
+                            mIvUpvote.setSelected(false);
+                        }
+                        downvote(idea, currentUser, downvoteUsers);
                         downvotes++;
-                        idea.setDownvotes(downvotes);
                     }
 
                     // Change upvote text & image based on previous interaction
-                    mIvDownvote.setSelected(!hasInteracted);
+                    mIvDownvote.setSelected(!hasDownvoted);
                     mTvVotes.setText(Integer.toString(upvotes - downvotes));
 
                     idea.saveInBackground(new SaveCallback() {
@@ -295,6 +303,28 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             }
         }
         return allUsers;
+    }
+
+    //
+
+    private void upvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> upvoteUsers) {
+        idea.add("upvoteUsers", currentUser);
+        idea.setUpvotes(idea.getUpvotes() + 1);
+    }
+
+    private void unUpvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> upvoteUsers) {
+        idea.setUpvoteUsers(removeUser(upvoteUsers, currentUser));
+        idea.setUpvotes(idea.getUpvotes() - 1);
+    }
+
+    private void downvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> downvoteUsers) {
+        idea.add("downvoteUsers", currentUser);
+        idea.setDownvotes(idea.getDownvotes() + 1);
+    }
+
+    private void unDownvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> downvoteUsers) {
+        idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
+        idea.setDownvotes(idea.getDownvotes() - 1);
     }
 
     private AlertDialog AskOption(Idea idea) {
