@@ -10,6 +10,7 @@
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
         <entry key="app/src/main/res/drawable/layout_image_circle.xml" value="0.5885" />
         <entry key="app/src/main/res/drawable/logo.xml" value="0.7685" />
+        <entry key="app/src/main/res/layout/activity_idea_details.xml" value="0.4762516046213094" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/activity_private_idea_feed.xml" value="0.9369791666666667" />

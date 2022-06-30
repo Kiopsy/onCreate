@@ -3,7 +3,7 @@ package com.example.onCreate.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,26 +12,37 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
+import com.example.onCreate.activities.IdeaDetailsActivity;
 import com.example.onCreate.models.Idea;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.onCreate.fragments.GlobalFeedFragment.containsUser;
+import static com.example.onCreate.fragments.GlobalFeedFragment.downvoteOnClickListener;
+import static com.example.onCreate.fragments.GlobalFeedFragment.upvoteOnClickListener;
+import static com.example.onCreate.fragments.PrivateFeedFragment.starOnClickListener;
 
 public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 
     private Context mContext;
     private List<Idea> mIdeas;
     private boolean mIsPrivateFeed;
-    private final String mTAG = "IdeaAdapter";
+//    private View.OnClickListener mUpvoteClickListener;
+//    private View.OnClickListener mDownvoteClickListener;
+//    private View.OnClickListener mStarClickListener;
+//    private View.OnClickListener mTrashClickListener;
+    private final String TAG = "IdeaAdapter";
 
     // Pass in context, list of ideas, and a bool to distinguish whether adapter is used for global vs private feeds
     public IdeaAdapter(Context context, List<Idea> ideas, boolean isPrivateFeed) {
@@ -44,7 +55,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.item_idea, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.item_idea, parent, false);
         return new ViewHolder(view);
     }
 
@@ -53,7 +64,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // Get the data at position
         Idea idea = mIdeas.get(position);
-
         // Bind the data to the view holder
         holder.bind(idea);
     }
@@ -63,19 +73,38 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         return mIdeas.size();
     }
 
+    // TODO: not sure how to properly set these click listeners
+//    // Set all the click listeners for image buttons: up/downvote, trash, star
+//    public void setUpvoteClickListener(View.OnClickListener mUpvoteClickListener) {
+//        this.mUpvoteClickListener = mUpvoteClickListener;
+//    }
+//
+//    public void setDownvoteClickListener(View.OnClickListener mDownvoteClickListener) {
+//        this.mDownvoteClickListener = mDownvoteClickListener;
+//    }
+//
+//    public void setStarClickListener(View.OnClickListener mStarClickListener) {
+//        this.mStarClickListener = mStarClickListener;
+//    }
+//
+//    public void setTrashClickListener(View.OnClickListener mTrashClickListener) {
+//        this.mTrashClickListener = mTrashClickListener;
+//    }
+
     // Define a ViewHolder to connect UI with Backend
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        // TODO: is m a suitable prefix for these views?
-        TextView mTvTitle;
-        TextView mTvDescription;
-        TextView mTvTime;
-        TextView mTvVotes;
-        ImageView mIvStars;
-        ImageView mIvTrash;
-        ImageView mIvUpvote;
-        ImageView mIvDownvote;
-        ImageView mIvPostImage;
+        private TextView mTvTitle;
+        private TextView mTvDescription;
+        private TextView mTvTime;
+        private TextView mTvVotes;
+        private ImageView mIvStars;
+        private ImageView mIvTrash;
+        private ImageView mIvUpvote;
+        private ImageView mIvDownvote;
+        private ImageView mIvPostImage;
+        private ConstraintLayout privateFeedButtonLayout;
+        private ConstraintLayout globalFeedButtonLayout;
 
         // Put all Views in a ViewHolder
         public ViewHolder(@NonNull View itemView) {
@@ -90,6 +119,8 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mIvPostImage = itemView.findViewById(R.id.ivPostImage);
             mIvUpvote = itemView.findViewById(R.id.ivUpvote);
             mIvDownvote = itemView.findViewById(R.id.ivDownvotes);
+            privateFeedButtonLayout = itemView.findViewById(R.id.privateFeedButtonLayout);
+            globalFeedButtonLayout = itemView.findViewById(R.id.globalFeedButtonLayout);
             itemView.setOnClickListener(this);
         }
 
@@ -103,19 +134,15 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             // Display different feeds based on whether feed is private vs global
             if (mIsPrivateFeed) {
                 // Set visibility for private feed views
-                mIvStars.setVisibility(View.VISIBLE);
-                mIvUpvote.setVisibility(View.GONE);
-                mTvVotes.setVisibility(View.GONE);
-                mIvDownvote.setVisibility(View.GONE);
+                privateFeedButtonLayout.setVisibility(View.VISIBLE);
+                globalFeedButtonLayout.setVisibility(View.GONE);
 
                 // Set functionality for private feed
                 mIvStars.setSelected(idea.getStarred());
             } else {
                 // Set visibility for global feed views
-                mIvUpvote.setVisibility(View.VISIBLE);
-                mTvVotes.setVisibility(View.VISIBLE);
-                mIvDownvote.setVisibility(View.VISIBLE);
-                mIvStars.setVisibility(View.GONE);
+                privateFeedButtonLayout.setVisibility(View.GONE);
+                globalFeedButtonLayout.setVisibility(View.VISIBLE);
 
                 // Only allow users to delete their own posts
                 if (idea.getUser().getObjectId().equals(currentUser.getObjectId())) {
@@ -138,113 +165,10 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mTvVotes.setText(Integer.toString(idea.getUpvotes() - idea.getDownvotes()));
             }
 
-            // Starring an idea
-            mIvStars.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean star = !idea.getStarred();
-                    idea.setStarred(star);
-                    mIvStars.setSelected(star);
-                    idea.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                Log.e(mTAG, "error while saving", e);
-                                Toast.makeText(mContext, "error while saving", Toast.LENGTH_SHORT).show();
-                            }
-                            Log.i(mTAG, "Post save was successful");
-                        }
-                    });
-                }
-            });
-
-            // Upvoting a global post
-            mIvUpvote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Check if current user is already upvoted on the post
-                    ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
-                    ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
-                    boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
-                    boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
-                    int upvotes = idea.getUpvotes();
-                    int downvotes = idea.getDownvotes();
-
-                    if (hasUpvoted) {
-                        // Un-upvote a post: remove current user from upvote list and change the upvote count
-                        unUpvote(idea, currentUser, downvoteUsers);
-                        upvotes--;
-                    } else {
-                        // Upvote a post: add current user to upvote list and change the upvote count
-                        if (hasDownvoted) {
-                            unDownvote(idea, currentUser, upvoteUsers);
-                            downvotes--;
-                            mIvDownvote.setSelected(false);
-                        }
-                        upvote(idea, currentUser, downvoteUsers);
-                        upvotes++;
-                    }
-
-                    // Change upvote text & image based on previous interaction
-                    mIvUpvote.setSelected(!hasUpvoted);
-                    mTvVotes.setText(Integer.toString(upvotes - downvotes));
-
-                    idea.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                Log.e(mTAG, "error while saving", e);
-                                Toast.makeText(mContext, "error while saving", Toast.LENGTH_SHORT).show();
-                            }
-                            Log.i(mTAG, "Post save was successful");
-                        }
-                    });
-                }
-            });
-
-            // Downvoting a global post
-            mIvDownvote.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Check if current user is already downvoted on the post
-                    ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
-                    ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
-                    boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
-                    boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
-                    int upvotes = idea.getUpvotes();
-                    int downvotes = idea.getDownvotes();
-
-                    if (hasDownvoted) {
-                        // Un-downvote a post: remove current user from upvote list and change the upvote count
-                        unDownvote(idea, currentUser, downvoteUsers);
-                        downvotes--;
-                    } else {
-                        // Downvote a post: add current user to upvote list and change the upvote count
-                        if (hasUpvoted) {
-                            unUpvote(idea, currentUser, upvoteUsers);
-                            upvotes--;
-                            mIvUpvote.setSelected(false);
-                        }
-                        downvote(idea, currentUser, downvoteUsers);
-                        downvotes++;
-                    }
-
-                    // Change upvote text & image based on previous interaction
-                    mIvDownvote.setSelected(!hasDownvoted);
-                    mTvVotes.setText(Integer.toString(upvotes - downvotes));
-
-                    idea.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e != null) {
-                                Log.e(mTAG, "error while saving", e);
-                                Toast.makeText(mContext, "error while saving", Toast.LENGTH_SHORT).show();
-                            }
-                            Log.i(mTAG, "Post save was successful");
-                        }
-                    });
-                }
-            });
+            // Set all the click listeners for image buttons: up/downvote, trash, star
+            mIvUpvote.setOnClickListener(upvoteOnClickListener(itemView, idea));
+            mIvDownvote.setOnClickListener(downvoteOnClickListener(itemView, idea));
+            mIvStars.setOnClickListener(starOnClickListener(itemView, idea));
 
             mIvTrash.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -267,64 +191,19 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea
         @Override
         public void onClick(View v) {
-//            // gets item position
-//            int position = getAdapterPosition();
-//            // make sure the position is valid, i.e. actually exists in the view
-//            if (position != RecyclerView.NO_POSITION) {
-//                // get the movie at the position, this won't work if the class is static
-//                Idea post = ideas.get(position);
-//                // create intent for the new activity
-//                Intent intent = new Intent(context, PostDetailsActivity.class);
-//                intent.putExtra("post", post);
-//                // show the activity
-//                context.startActivity(intent);
-//            }
-        }
-    }
-
-    // Checks if an array of ParseUsers contains a specific user
-    private boolean containsUser (ArrayList<ParseUser> allUsers, ParseUser user) {
-        String userId = user.getObjectId();
-        for (ParseUser u :allUsers) {
-            if (u.getObjectId().equals(userId)) {
-                return true;
+            // gets item position
+            int position = getAdapterPosition();
+            // make sure the position is valid, i.e. actually exists in the view
+            if (position != RecyclerView.NO_POSITION) {
+                // get the movie at the position, this won't work if the class is static
+                Idea idea = mIdeas.get(position);
+                // create intent for the new activity
+                Intent intent = new Intent(mContext, IdeaDetailsActivity.class);
+                intent.putExtra("idea", idea);
+                // show the activity
+                mContext.startActivity(intent);
             }
         }
-        return false;
-    }
-
-    // Remove a user from a list of ParseUsers by Object id
-    private ArrayList<ParseUser> removeUser(ArrayList<ParseUser> allUsers, ParseUser user) {
-        String userId = user.getObjectId();
-        for (ParseUser u :allUsers) {
-            if (u.getObjectId().equals(userId)) {
-               allUsers.remove(u);
-               break;
-            }
-        }
-        return allUsers;
-    }
-
-    //
-
-    private void upvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> upvoteUsers) {
-        idea.add("upvoteUsers", currentUser);
-        idea.setUpvotes(idea.getUpvotes() + 1);
-    }
-
-    private void unUpvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> upvoteUsers) {
-        idea.setUpvoteUsers(removeUser(upvoteUsers, currentUser));
-        idea.setUpvotes(idea.getUpvotes() - 1);
-    }
-
-    private void downvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> downvoteUsers) {
-        idea.add("downvoteUsers", currentUser);
-        idea.setDownvotes(idea.getDownvotes() + 1);
-    }
-
-    private void unDownvote(Idea idea, ParseUser currentUser, ArrayList<ParseUser> downvoteUsers) {
-        idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
-        idea.setDownvotes(idea.getDownvotes() - 1);
     }
 
     private AlertDialog AskOption(Idea idea) {

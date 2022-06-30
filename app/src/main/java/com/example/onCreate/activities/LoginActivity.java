@@ -20,7 +20,7 @@ import com.parse.ParseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String mTAG = "LoginActivity";
+    private static final String TAG = "LoginActivity";
     private TextInputLayout mEtUsername;
     private TextInputLayout mEtPassword;
     private Button mBtnLogin;
@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(mTAG, "onClick login button");
+                Log.i(TAG, "onClick login button");
                 String username = mEtUsername.getEditText().getText().toString();
                 String password = mEtPassword.getEditText().getText().toString();
                 loginUser(username, password);
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         mBtnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(mTAG, "onClick signup button");
+                Log.i(TAG, "onClick signup button");
                 goSignUpActivity();
             }
         });
@@ -67,13 +67,13 @@ public class LoginActivity extends AppCompatActivity {
 
     // Login using parse
     private void loginUser(String username, String password) {
-        Log.i(mTAG, "Attempting to login user" + username);
+        Log.i(TAG, "Attempting to login user" + username);
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
                 // Check if login was successful
                 if (e != null) {
-                    Log.e(mTAG, "Issue with login", e);
+                    Log.e(TAG, "Issue with login", e);
                     Toast.makeText(LoginActivity.this, "Issue with login!", Toast.LENGTH_SHORT).show();
                     return;
                 }

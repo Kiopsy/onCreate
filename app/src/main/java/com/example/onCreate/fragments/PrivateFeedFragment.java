@@ -11,14 +11,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +31,7 @@ import java.util.List;
 
 public class PrivateFeedFragment extends Fragment {
 
-    private static final String mTAG = "PrivateFeedFragment";
+    private static final String TAG = "PrivateFeedFragment";
     private EndlessRecyclerViewScrollListener mScrollListener;
     private SwipeRefreshLayout mSwipeContainer;
     private RecyclerView mRvPosts;
@@ -66,7 +71,7 @@ public class PrivateFeedFragment extends Fragment {
                 // Triggered only when new data needs to be appended to the list
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextData(lastPost.getCreatedAt());
+                queryPosts(lastPost.getCreatedAt());
             }
         };
 
@@ -84,7 +89,7 @@ public class PrivateFeedFragment extends Fragment {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 mAdapter.clear();
-                queryPosts();
+                queryPosts(null);
                 mSwipeContainer.setRefreshing(false);
             }
         });
@@ -96,54 +101,24 @@ public class PrivateFeedFragment extends Fragment {
                 android.R.color.holo_red_light);
 
         // query posts from parse
-        queryPosts();
-    }
-
-    private void loadNextData(Date date) {
-        // specify what type of data we want to query - Post.class
-        ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
-        // include data referred by user key
-        query.include(Idea.KEY_USER);
-        // find only private posts
-        query.whereEqualTo("isPrivate", true);
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
-        // limit query to latest 20 items
-        query.setLimit(20);
-        // order posts by creation date (newest first)
-        query.addDescendingOrder("createdAt");
-
-        query.whereLessThan("createdAt", date);
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Idea>() {
-            @Override
-            public void done(List<Idea> feed, com.parse.ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(mTAG, "Issue with getting posts", e);
-                    return;
-                }
-
-                // for debugging purposes let's print every post description to logcat
-                for (Idea idea : feed) {
-                    Log.i(mTAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
-                }
-
-                // save received posts to list and notify adapter of new data
-                mIdeas.addAll(feed);
-                mAdapter.notifyDataSetChanged();
-            }
-        });
+        queryPosts(null);
     }
 
     // Use Parse to query for the last 20 posts
-    private void queryPosts() {
+    // Optional: include date in endless scrolling case
+    private void queryPosts(Date date) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
         query.include(Idea.KEY_USER);
         // find only private posts
         query.whereEqualTo("isPrivate", true);
+        // find only the current user's posts
         query.whereEqualTo("user", ParseUser.getCurrentUser());
+        // loading additional posts after a date for endless scrolling
+        if (date != null) {
+            query.whereLessThan("createdAt", date);
+        }
         // limit query to latest 20 items
         query.setLimit(20);
         // order posts by creation date (newest first)
@@ -154,13 +129,13 @@ public class PrivateFeedFragment extends Fragment {
             public void done(List<Idea> feed, com.parse.ParseException e) {
                 // check for errors
                 if (e != null) {
-                    Log.e(mTAG, "Issue with getting posts", e);
+                    Log.e(TAG, "Issue with getting posts", e);
                     return;
                 }
 
                 // for debugging purposes let's print every post description to logcat
                 for (Idea idea : feed) {
-                    Log.i(mTAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
+                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
                 }
 
                 // save received posts to list and notify adapter of new data
@@ -168,5 +143,20 @@ public class PrivateFeedFragment extends Fragment {
                 mAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    // Setting on click listeners
+    public static View.OnClickListener starOnClickListener(View itemView, Idea idea) {
+        ImageView mIvStars= itemView.findViewById(R.id.ivStars);
+        View.OnClickListener starListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean star = !idea.getStarred();
+                idea.setStarred(star);
+                mIvStars.setSelected(star);
+                idea.saveInBackground();
+            }
+        };
+        return starListener;
     }
 }
