@@ -43,10 +43,12 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="43dp"
-        android:fontFamily="sans-serif"
+        android:fontFamily="@font/lato_bold"
         android:text="texting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea post"
         android:textAlignment="viewStart"
+        android:textAllCaps="false"
         android:textColor="@color/black"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />

@@ -2,6 +2,7 @@ package com.example.onCreate.fragments;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
@@ -44,6 +45,7 @@ public class BrainstormFragment extends Fragment {
     private RadioGroup mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
     private final static int PICK_PHOTO_CODE = 1046;
+    private final static int MEDIA_SELECT_CODE = 2135;
     private final static int MAX_DESCRIPTION_LENGTH = 140;
     private final static int MAX_TITLE_LENGTH = 35;
     private final static String TAG = "Brainstorming Fragment";
@@ -199,6 +201,19 @@ public class BrainstormFragment extends Fragment {
 
             // Load the selected image into a preview
             mIvPostImage.setImageBitmap(mSelectedImage);
+        } else if ((data != null) && requestCode == MEDIA_SELECT_CODE) {
+
+//            mSelectedImage = loadFromUri(media);
+//            byte[] byteArray = data.getByteArrayExtra("image");
+//            mSelectedImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+            Uri photoUri = data.getData();
+
+            // Load the image located at photoUri into selectedImage
+            mSelectedImage = loadFromUri(photoUri);
+
+            // Load the selected image into a preview
+            mIvPostImage.setImageBitmap(mSelectedImage);
         }
     }
 
@@ -212,6 +227,6 @@ public class BrainstormFragment extends Fragment {
     // Intent to go to the media select page
     private void goMediaSelect() {
         Intent i = new Intent(getContext(), MediaSelectActivity.class);
-        startActivity(i);
+        startActivityForResult(i, MEDIA_SELECT_CODE);
     }
 }

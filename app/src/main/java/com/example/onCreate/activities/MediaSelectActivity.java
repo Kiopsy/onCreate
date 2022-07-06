@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.onCreate.R;
-import com.google.android.material.textfield.TextInputLayout;
 import com.parse.ParseFile;
 
 import java.io.ByteArrayOutputStream;
@@ -30,6 +29,8 @@ public class MediaSelectActivity extends AppCompatActivity {
     private ArrayList<ParseFile> mMediaList;
     private static final String TAG = "MediaSelectActivity";
     private final static int PICK_PHOTO_CODE = 1046;
+    private final static int CANVAS_CODE = 1253;
+    private final static int MEDIA_SELECT_CODE = 2135;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,7 @@ public class MediaSelectActivity extends AppCompatActivity {
                 goCanvasActivity();
             }
         });
+        setActionBarIcon();
     }
 
     // Trigger gallery selection for a photo
@@ -92,26 +94,22 @@ public class MediaSelectActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((data != null) && requestCode == PICK_PHOTO_CODE) {
-            Uri photoUri = data.getData();
-
-            // Load the image located at photoUri into selectedImage
-            mSelectedImage = loadFromUri(photoUri);
-
-            // Load the selected image into a preview
-//            mIvPostImage.setImageBitmap(mSelectedImage);
+        if ((data != null)) {
+            setResult(MEDIA_SELECT_CODE, data);
+            finish();
         }
     }
 
     // Intent to go sign up
     private void goCanvasActivity() {
         Intent i = new Intent(this, CanvasActivity.class);
-        startActivity(i);
+        startActivityForResult(i, CANVAS_CODE);
     }
 
-    // Action bar and logo setup
+    // Action bar for the screen that shows onCreate logo
     private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);

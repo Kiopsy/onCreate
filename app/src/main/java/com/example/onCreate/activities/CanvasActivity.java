@@ -1,36 +1,43 @@
 package com.example.onCreate.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.graphics.Bitmap;
 import android.net.Uri;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.example.onCreate.R;
 import com.example.onCreate.utilities.DrawingView;
-import com.example.onCreate.utilities.canvas.domain.manager.FileManager;
-import com.example.onCreate.utilities.canvas.domain.manager.PermissionManager;
+import com.example.onCreate.utilities.StrokeSelectorDialog;
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
 import com.github.dhaval2404.colorpicker.listener.ColorListener;
-import com.github.dhaval2404.colorpicker.listener.DismissListener;
 import com.github.dhaval2404.colorpicker.model.ColorShape;
 import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 // Code used from: https://github.com/martinbaciga/android-drawing-canvas
-public class CanvasActivity extends AppCompatActivity
-{
+public class CanvasActivity extends AppCompatActivity {
     private DrawingView mDrawingView;
     private ImageView mFillBackgroundImageView;
     private ImageView mColorImageView;
@@ -40,11 +47,11 @@ public class CanvasActivity extends AppCompatActivity
     private int mCurrentBackgroundColor;
     private int mCurrentColor;
     private int mCurrentStroke;
+    private final static int MEDIA_SELECT_CODE = 2135;
     private static final int MAX_STROKE_WIDTH = 50;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_canvas);
 
@@ -90,20 +97,19 @@ public class CanvasActivity extends AppCompatActivity
             }
         });
 
+        setActionBarIcon();
         initDrawingView();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_canvas, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_clear:
                 new AlertDialog.Builder(this)
                         .setTitle("Clear canvas")
@@ -119,26 +125,37 @@ public class CanvasActivity extends AppCompatActivity
                         .show();
                 break;
             case R.id.action_send:
-                requestPermissionsAndSaveBitmap();
-                break;
-        }
+                Bitmap drawing = mDrawingView.getBitmap();
 
+//                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+//                drawing.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+//                byte[] byteArray = bStream.toByteArray();
+
+                Intent data = new Intent();
+//                data.putExtra("image", byteArray);
+                data.setData(getImageUri(this, drawing));
+                setResult(MEDIA_SELECT_CODE, data);
+                finish();
+        }
         return super.onOptionsItemSelected(item);
     }
 
-    private void initDrawingView()
-    {
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+    private void initDrawingView() {
         mCurrentBackgroundColor = ContextCompat.getColor(this, android.R.color.white);
         mCurrentColor = ContextCompat.getColor(this, android.R.color.black);
         mCurrentStroke = 10;
-
         mDrawingView.setBackgroundColor(mCurrentBackgroundColor);
         mDrawingView.setPaintColor(mCurrentColor);
         mDrawingView.setPaintStrokeWidth(mCurrentStroke);
     }
 
-    private void startFillBackgroundDialog()
-    {
+    private void startFillBackgroundDialog() {
         new MaterialColorPickerDialog
                 .Builder(this)
                 .setTitle("Pick Theme")
@@ -150,14 +167,13 @@ public class CanvasActivity extends AppCompatActivity
                     public void onColorSelected(int color, @NotNull String colorHex) {
                         // Handle Color Selection
                         mCurrentBackgroundColor = color;
-                        mDrawingView.setBackgroundColor(mCurrentColor);
+                        mDrawingView.setBackgroundColor(mCurrentBackgroundColor);
                     }
                 })
                 .show();
     }
 
-    private void startColorPickerDialog()
-    {
+    private void startColorPickerDialog() {
         new MaterialColorPickerDialog
                 .Builder(this)
                 .setTitle("Pick Theme")
@@ -175,37 +191,53 @@ public class CanvasActivity extends AppCompatActivity
                 .show();
     }
 
-    private void startStrokeSelectorDialog()
-    {
-        System.out.println("hello");
-    }
-
-    private void requestPermissionsAndSaveBitmap()
-    {
-        if (PermissionManager.checkWriteStoragePermissions(this))
-        {
-            Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
-            //startShareDialog(uri);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode)
-        {
-            case PermissionManager.REQUEST_WRITE_STORAGE:
-            {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
-                    Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
-                    //startShareDialog(uri);
-                } else
-                {
-                    Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-                }
+    private void startStrokeSelectorDialog() {
+        StrokeSelectorDialog dialog = StrokeSelectorDialog.newInstance(mCurrentStroke, MAX_STROKE_WIDTH);
+        dialog.setOnStrokeSelectedListener(new StrokeSelectorDialog.OnStrokeSelectedListener() {
+            @Override
+            public void onStrokeSelected(int stroke) {
+                mCurrentStroke = stroke;
+                mDrawingView.setPaintStrokeWidth(mCurrentStroke);
             }
-        }
+        });
+        dialog.show(getSupportFragmentManager(), "StrokeSelectorDialog");
     }
+
+    // Action bar and logo setup
+    private void setActionBarIcon() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.drawable.logo);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+    }
+    
+//    private void requestPermissionsAndSaveBitmap()
+//    {
+//        if (PermissionManager.checkWriteStoragePermissions(this))
+//        {
+//            Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
+//            //startShareDialog(uri);
+//        }
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+//    {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode)
+//        {
+//            case PermissionManager.REQUEST_WRITE_STORAGE:
+//            {
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+//                {
+//                    Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
+//                    //startShareDialog(uri);
+//                } else
+//                {
+//                    Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        }
+//    }
 }
