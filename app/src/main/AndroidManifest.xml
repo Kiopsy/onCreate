@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <queries>
-
         <!-- Camera -->
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -30,6 +29,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnCreate"
         tools:targetApi="31">
+
+        <provider
+            android:name=".utilities.canvas.domain.provider.GenericFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <activity
+            android:name=".activities.CanvasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.MediaSelectActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.IdeaDetailsActivity"
             android:exported="false" />

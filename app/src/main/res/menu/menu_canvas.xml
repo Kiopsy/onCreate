@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="co.martinbaciga.interviewtest.ui.activity.AddThreadActivity">
+    <item android:id="@+id/action_clear"
+        android:title="Clear"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_trashcan"/>
+    <item android:id="@+id/action_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:iconTint="@color/white"
+        android:text="SEND"
+        android:textColor="@color/white"
+        android:title="SEND"
+        app:showAsAction="always" />
+</menu>

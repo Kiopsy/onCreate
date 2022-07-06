@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.onCreate.R;
 import com.example.onCreate.activities.MainActivity;
+import com.example.onCreate.activities.MediaSelectActivity;
 import com.example.onCreate.models.Idea;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -43,9 +44,9 @@ public class BrainstormFragment extends Fragment {
     private RadioGroup mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
     private final static int PICK_PHOTO_CODE = 1046;
-    private final static int mMAX_DESCRIPTION_LENGTH = 140;
-    private final static int mMAX_TITLE_LENGTH = 35;
-    private final static String mTAG = "Brainstorming Fragment";
+    private final static int MAX_DESCRIPTION_LENGTH = 140;
+    private final static int MAX_TITLE_LENGTH = 35;
+    private final static String TAG = "Brainstorming Fragment";
 
     public BrainstormFragment() {
         // Required empty constructor
@@ -71,7 +72,7 @@ public class BrainstormFragment extends Fragment {
         mIvMedia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onPickPhoto(v);
+                goMediaSelect();
             }
         });
 
@@ -85,7 +86,7 @@ public class BrainstormFragment extends Fragment {
                     Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (description.length() > mMAX_DESCRIPTION_LENGTH) {
+                if (description.length() > MAX_DESCRIPTION_LENGTH) {
                     Toast.makeText(getContext(), "Sorry, your description is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -96,7 +97,7 @@ public class BrainstormFragment extends Fragment {
                     Toast.makeText(getContext(), "title cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (title.length() > mMAX_TITLE_LENGTH) {
+                if (title.length() > MAX_TITLE_LENGTH) {
                     Toast.makeText(getContext(), "Sorry, your title is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -142,10 +143,10 @@ public class BrainstormFragment extends Fragment {
             @Override
             public void done(ParseException e) {
                 if (e != null) {
-                    Log.e(mTAG, "error while saving", e);
+                    Log.e(TAG, "error while saving", e);
                     Toast.makeText(getContext(), "error while saving", Toast.LENGTH_SHORT).show();
                 }
-                Log.i(mTAG, "Post save was successful");
+                Log.i(TAG, "Post save was successful");
                 mEtDescription.setText("");
                 mIvPostImage.setImageResource(0);
             }
@@ -206,5 +207,11 @@ public class BrainstormFragment extends Fragment {
         Intent i = new Intent(getContext(), MainActivity.class);
         startActivity(i);
         getActivity().finish();
+    }
+
+    // Intent to go to the media select page
+    private void goMediaSelect() {
+        Intent i = new Intent(getContext(), MediaSelectActivity.class);
+        startActivity(i);
     }
 }

@@ -28,7 +28,7 @@ import java.util.List;
 
 public class GlobalFeedFragment extends Fragment {
 
-    public static final String TAG = "PrivateFeedFragment";
+    public static final String TAG = "GlobalFeedFragment";
     private EndlessRecyclerViewScrollListener scrollListener;
     private SwipeRefreshLayout mSwipeContainer;
     protected RecyclerView mRvPosts;
@@ -41,7 +41,7 @@ public class GlobalFeedFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_private_feed, container, false);
+        return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override

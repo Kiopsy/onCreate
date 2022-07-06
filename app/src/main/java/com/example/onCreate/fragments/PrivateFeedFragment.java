@@ -12,18 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,7 +40,7 @@ public class PrivateFeedFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_private_feed, container, false);
+        return inflater.inflate(R.layout.fragment_feed, container, false);
     }
 
     @Override
