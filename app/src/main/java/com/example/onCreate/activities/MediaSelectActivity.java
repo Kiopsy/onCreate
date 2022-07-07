@@ -25,7 +25,6 @@ public class MediaSelectActivity extends AppCompatActivity {
 
     private Button mBtnGallery;
     private Button mBtnCanvas;
-    private Bitmap mSelectedImage;
     private ArrayList<ParseFile> mMediaList;
     private static final String TAG = "MediaSelectActivity";
     private final static int PICK_PHOTO_CODE = 1046;
@@ -64,15 +63,7 @@ public class MediaSelectActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_PHOTO_CODE);
     }
 
-    // converts a bitmap to a ParseFile
-    private ParseFile bitmapToParseFile(Bitmap image) {
-        ByteArrayOutputStream byteArrayOutputStream=new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG,100,byteArrayOutputStream);
-        byte[] imageByte = byteArrayOutputStream.toByteArray();
-        ParseFile parseFile = new ParseFile("image_file.png",imageByte);
-        return parseFile;
-    }
-
+    // Loads a bitmap from a photo's URI
     private Bitmap loadFromUri(Uri photoUri) {
         Bitmap image = null;
         try {
@@ -91,10 +82,25 @@ public class MediaSelectActivity extends AppCompatActivity {
         return image;
     }
 
+    private byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+        return bStream.toByteArray();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((data != null)) {
+        if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            // Converts a photo's URI to Bitmap for standardization
+            byte[] byteArray = bitmapToByteArray(loadFromUri(data.getData()));
+            data.putExtra("image", byteArray);
+
+            // Send photo byteArray back to BrainstormFragment
+            setResult(MEDIA_SELECT_CODE, data);
+            finish();
+        } else if ((data != null) && requestCode == CANVAS_CODE) {
+            // Send drawing byteArray back to BrainstormFragment
             setResult(MEDIA_SELECT_CODE, data);
             finish();
         }

@@ -1,5 +1,6 @@
 package com.example.onCreate.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,8 +24,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.onCreate.R;
+import com.example.onCreate.activities.CanvasActivity;
 import com.example.onCreate.activities.MainActivity;
-import com.example.onCreate.activities.MediaSelectActivity;
+import com.example.onCreate.dialogs.MediaSelectDialog;
 import com.example.onCreate.models.Idea;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -44,8 +46,10 @@ public class BrainstormFragment extends Fragment {
     private ImageView mIvPostImage;
     private RadioGroup mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
+    private MediaSelectDialog mMediaDialog;
     private final static int PICK_PHOTO_CODE = 1046;
     private final static int MEDIA_SELECT_CODE = 2135;
+    private final static int CANVAS_CODE = 1253;
     private final static int MAX_DESCRIPTION_LENGTH = 140;
     private final static int MAX_TITLE_LENGTH = 35;
     private final static String TAG = "Brainstorming Fragment";
@@ -74,7 +78,9 @@ public class BrainstormFragment extends Fragment {
         mIvMedia.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goMediaSelect();
+//                goMediaSelect();
+                mMediaDialog = new MediaSelectDialog(galleryBtnOnClick(), canvasBtnOnClick());
+                mMediaDialog.showDialog(getActivity());
             }
         });
 
@@ -190,6 +196,28 @@ public class BrainstormFragment extends Fragment {
         return image;
     }
 
+    public View.OnClickListener galleryBtnOnClick() {
+        View.OnClickListener onClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMediaDialog.hideDialog();
+                onPickPhoto(v);
+            }
+        };
+        return onClick;
+    }
+
+    public View.OnClickListener canvasBtnOnClick() {
+        View.OnClickListener onClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMediaDialog.hideDialog();
+                goCanvasActivity();
+            }
+        };
+        return onClick;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -201,16 +229,12 @@ public class BrainstormFragment extends Fragment {
 
             // Load the selected image into a preview
             mIvPostImage.setImageBitmap(mSelectedImage);
-        } else if ((data != null) && requestCode == MEDIA_SELECT_CODE) {
+        } else if ((data != null) && requestCode == CANVAS_CODE) {
 
-//            mSelectedImage = loadFromUri(media);
-//            byte[] byteArray = data.getByteArrayExtra("image");
-//            mSelectedImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            byte[] byteArray = data.getByteArrayExtra("image");
 
-            Uri photoUri = data.getData();
-
-            // Load the image located at photoUri into selectedImage
-            mSelectedImage = loadFromUri(photoUri);
+            // Get a bitmap from the media's byteArray
+            mSelectedImage = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
             // Load the selected image into a preview
             mIvPostImage.setImageBitmap(mSelectedImage);
@@ -224,9 +248,9 @@ public class BrainstormFragment extends Fragment {
         getActivity().finish();
     }
 
-    // Intent to go to the media select page
-    private void goMediaSelect() {
-        Intent i = new Intent(getContext(), MediaSelectActivity.class);
-        startActivityForResult(i, MEDIA_SELECT_CODE);
+    // Intent to go canvas drawing
+    private void goCanvasActivity() {
+        Intent i = new Intent(getContext(), CanvasActivity.class);
+        startActivityForResult(i, CANVAS_CODE);
     }
 }

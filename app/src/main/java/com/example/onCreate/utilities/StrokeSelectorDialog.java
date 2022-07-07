@@ -14,8 +14,8 @@ import androidx.fragment.app.DialogFragment;
 import com.example.onCreate.R;
 
 // Code used from: https://github.com/martinbaciga/android-drawing-canvas
-public class StrokeSelectorDialog extends DialogFragment
-{
+public class StrokeSelectorDialog extends DialogFragment {
+
 	private static final String PARAM_CURRENT_STROKE = "CurrentStroke";
 	private static final String PARAM_MAX_STROKE = "MaxStroke";
 	private SeekBar mSeekBar;
@@ -90,20 +90,17 @@ public class StrokeSelectorDialog extends DialogFragment
 		return mDialog;
 	}
 
-	private void initControls(View v)
-	{
+	private void initControls(View v) {
 		mSeekBar = (SeekBar) v.findViewById(R.id.fragment_dialog_stroke_selector_sb);
 		mSeekBar.setMax(mMaxStroke);
 		mSeekBar.setProgress(mCurrentStroke);
 	}
 
-	public void setOnStrokeSelectedListener(OnStrokeSelectedListener listener)
-	{
+	public void setOnStrokeSelectedListener(OnStrokeSelectedListener listener) {
 		mOnStrokeSelectedListener = listener;
 	}
 
-	public interface OnStrokeSelectedListener
-	{
+	public interface OnStrokeSelectedListener {
 		public void onStrokeSelected(int stroke);
 	}
 }

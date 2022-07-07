@@ -20,7 +20,6 @@ public class DrawingView extends View
 	private Paint mDrawPaint;
 	private Canvas mDrawCanvas;
 	private Bitmap mCanvasBitmap;
-
 	private ArrayList<Path> mPaths = new ArrayList<>();
 	private ArrayList<Paint> mPaints = new ArrayList<>();
 	private ArrayList<Path> mUndonePaths = new ArrayList<>();

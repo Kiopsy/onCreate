@@ -10,7 +10,6 @@ import android.net.Uri;
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.os.Bundle;
 import android.os.Environment;
@@ -31,13 +30,10 @@ import com.github.dhaval2404.colorpicker.model.ColorSwatch;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 // Code used from: https://github.com/martinbaciga/android-drawing-canvas
 public class CanvasActivity extends AppCompatActivity {
+
     private DrawingView mDrawingView;
     private ImageView mFillBackgroundImageView;
     private ImageView mColorImageView;
@@ -97,7 +93,10 @@ public class CanvasActivity extends AppCompatActivity {
             }
         });
 
+        // Set logo in actionbar
         setActionBarIcon();
+
+        // Set up the drawing view
         initDrawingView();
     }
 
@@ -110,6 +109,7 @@ public class CanvasActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            // Clears the canvas
             case R.id.action_clear:
                 new AlertDialog.Builder(this)
                         .setTitle("Clear canvas")
@@ -124,28 +124,25 @@ public class CanvasActivity extends AppCompatActivity {
                         .setNegativeButton("Cancel", null)
                         .show();
                 break;
+            // Sends the photo back to the brainstorming page for posting
             case R.id.action_send:
-                Bitmap drawing = mDrawingView.getBitmap();
-
-//                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-//                drawing.compress(Bitmap.CompressFormat.PNG, 100, bStream);
-//                byte[] byteArray = bStream.toByteArray();
+                // Converts canvas bitmap to byteArray
+                byte[] byteArray =  bitmapToByteArray(mDrawingView.getBitmap());
 
                 Intent data = new Intent();
-//                data.putExtra("image", byteArray);
-                data.setData(getImageUri(this, drawing));
+                data.putExtra("image", byteArray);
                 setResult(MEDIA_SELECT_CODE, data);
                 finish();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+    private byte[] bitmapToByteArray(Bitmap bitmap) {
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+        return bStream.toByteArray();
     }
+
     private void initDrawingView() {
         mCurrentBackgroundColor = ContextCompat.getColor(this, android.R.color.white);
         mCurrentColor = ContextCompat.getColor(this, android.R.color.black);
@@ -155,6 +152,7 @@ public class CanvasActivity extends AppCompatActivity {
         mDrawingView.setPaintStrokeWidth(mCurrentStroke);
     }
 
+    // Starts the background dialog
     private void startFillBackgroundDialog() {
         new MaterialColorPickerDialog
                 .Builder(this)
@@ -173,6 +171,7 @@ public class CanvasActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Starts the line color dialog
     private void startColorPickerDialog() {
         new MaterialColorPickerDialog
                 .Builder(this)
@@ -191,6 +190,7 @@ public class CanvasActivity extends AppCompatActivity {
                 .show();
     }
 
+    // Starts the line width dialog
     private void startStrokeSelectorDialog() {
         StrokeSelectorDialog dialog = StrokeSelectorDialog.newInstance(mCurrentStroke, MAX_STROKE_WIDTH);
         dialog.setOnStrokeSelectedListener(new StrokeSelectorDialog.OnStrokeSelectedListener() {
@@ -211,7 +211,7 @@ public class CanvasActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
     }
-    
+
 //    private void requestPermissionsAndSaveBitmap()
 //    {
 //        if (PermissionManager.checkWriteStoragePermissions(this))

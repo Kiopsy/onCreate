@@ -108,8 +108,6 @@ public class GlobalFeedFragment extends Fragment {
         query.include(Idea.KEY_USER);
         // find only private posts
         query.whereEqualTo("isPrivate", false);
-        // find only the current user's posts
-        query.whereEqualTo("user", ParseUser.getCurrentUser());
         // loading additional posts after a date for endless scrolling
         if (date != null) {
             query.whereLessThan("createdAt", date);
