@@ -1,19 +1,15 @@
 package com.example.onCreate.activities;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +17,7 @@ import android.widget.ImageView;
 
 import com.example.onCreate.R;
 import com.example.onCreate.utilities.DrawingView;
-import com.example.onCreate.utilities.StrokeSelectorDialog;
+import com.example.onCreate.dialogs.StrokeSelectorDialog;
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog;
 import com.github.dhaval2404.colorpicker.listener.ColorListener;
 import com.github.dhaval2404.colorpicker.model.ColorShape;

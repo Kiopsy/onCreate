@@ -1,4 +1,4 @@
-package com.example.onCreate.utilities;
+package com.example.onCreate.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;

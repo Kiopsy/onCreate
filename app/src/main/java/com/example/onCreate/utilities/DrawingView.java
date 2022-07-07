@@ -13,8 +13,8 @@ import android.view.View;
 import java.util.ArrayList;
 
 // Code from: https://github.com/martinbaciga/android-drawing-canvas
-public class DrawingView extends View
-{
+public class DrawingView extends View {
+
 	private Path mDrawPath;
 	private Paint mBackgroundPaint;
 	private Paint mDrawPaint;
@@ -30,21 +30,24 @@ public class DrawingView extends View
 	private int mPaintColor = 0xFF660000;
 	private int mStrokeWidth = 10;
 
-	public DrawingView(Context context, AttributeSet attrs)
-	{
+	// Dynamic image cropping
+	private float mMaxY = 0;
+	private float mMinY = Float.MAX_VALUE;
+	private final int CROP_BUFFER = 15;
+
+	public DrawingView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		init();
 	}
 
-	private void init()
-	{
+	private void init() {
 		mDrawPath = new Path();
 		mBackgroundPaint = new Paint();
 		initPaint();
 	}
 
-	private void initPaint()
-	{
+	private void initPaint() {
+
 		mDrawPaint = new Paint();
 		mDrawPaint.setColor(mPaintColor);
 		mDrawPaint.setAntiAlias(true);
@@ -54,26 +57,22 @@ public class DrawingView extends View
 		mDrawPaint.setStrokeCap(Paint.Cap.ROUND);
 	}
 
-	private void drawBackground(Canvas canvas)
-	{
+	private void drawBackground(Canvas canvas) {
 		mBackgroundPaint.setColor(mBackgroundColor);
 		mBackgroundPaint.setStyle(Paint.Style.FILL);
 		canvas.drawRect(0, 0, this.getWidth(), this.getHeight(), mBackgroundPaint);
 	}
 
-	private void drawPaths(Canvas canvas)
-	{
+	private void drawPaths(Canvas canvas) {
 		int i = 0;
-		for (Path p : mPaths)
-		{
+		for (Path p : mPaths) {
 			canvas.drawPath(p, mPaints.get(i));
 			i++;
 		}
 	}
 
 	@Override
-	protected void onDraw(Canvas canvas)
-	{
+	protected void onDraw(Canvas canvas) {
 		drawBackground(canvas);
 		drawPaths(canvas);
 
@@ -81,8 +80,7 @@ public class DrawingView extends View
 	}
 
 	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh)
-	{
+	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 
 		mCanvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -91,10 +89,12 @@ public class DrawingView extends View
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event)
-	{
+	public boolean onTouchEvent(MotionEvent event) {
 		float touchX = event.getX();
 		float touchY = event.getY();
+
+		mMaxY = Math.max(touchY, mMaxY);
+		mMinY = Math.min(touchY, mMinY);
 
 		switch (event.getAction())
 		{
@@ -119,8 +119,7 @@ public class DrawingView extends View
 		return true;
 	}
 
-	public void clearCanvas()
-	{
+	public void clearCanvas() {
 		mPaths.clear();
 		mPaints.clear();
 		mUndonePaths.clear();
@@ -129,46 +128,46 @@ public class DrawingView extends View
 		invalidate();
 	}
 
-	public void setPaintColor(int color)
-	{
+	public void setPaintColor(int color) {
 		mPaintColor = color;
 		mDrawPaint.setColor(mPaintColor);
 	}
 
-	public void setPaintStrokeWidth(int strokeWidth)
-	{
+	public void setPaintStrokeWidth(int strokeWidth) {
 		mStrokeWidth = strokeWidth;
 		mDrawPaint.setStrokeWidth(mStrokeWidth);
 	}
 
-	public void setBackgroundColor(int color)
-	{
+	public void setBackgroundColor(int color) {
 		mBackgroundColor = color;
 		mBackgroundPaint.setColor(mBackgroundColor);
 		invalidate();
 	}
 
-	public Bitmap getBitmap()
-	{
+	public Bitmap getBitmap() {
 		drawBackground(mDrawCanvas);
 		drawPaths(mDrawCanvas);
+
+		// Note: a crop buffer is used to ensure none of user's drawing is cropped
+
+		// Must account for when crop_buffer is out of bounds
+		int startY = Math.max(0, Math.round(mMinY) - CROP_BUFFER);
+		int height = Math.min(this.getHeight(), Math.round(mMaxY) - Math.round(mMinY) + (2 * CROP_BUFFER));
+
+		mCanvasBitmap = Bitmap.createBitmap(mCanvasBitmap, 0, startY, this.getWidth(), height);
 		return mCanvasBitmap;
 	}
 
-	public void undo()
-	{
-		if (mPaths.size() > 0)
-		{
+	public void undo() {
+		if (mPaths.size() > 0) {
 			mUndonePaths.add(mPaths.remove(mPaths.size() - 1));
 			mUndonePaints.add(mPaints.remove(mPaints.size() - 1));
 			invalidate();
 		}
 	}
 
-	public void redo()
-	{
-		if (mUndonePaths.size() > 0)
-		{
+	public void redo() {
+		if (mUndonePaths.size() > 0) {
 			mPaths.add(mUndonePaths.remove(mUndonePaths.size() - 1));
 			mPaints.add(mUndonePaints.remove(mUndonePaints.size() - 1));
 			invalidate();
