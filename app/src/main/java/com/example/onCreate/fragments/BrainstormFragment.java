@@ -165,19 +165,19 @@ public class BrainstormFragment extends Fragment {
     // Trigger gallery selection for a photo
     private void onPickPhoto(View view) {
         // Create intent for picking a photo from the gallery
-//        Intent intent = new Intent(Intent.ACTION_PICK,
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        startActivityForResult(intent, PICK_PHOTO_CODE);
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_PHOTO_CODE);
 
-        Intent intent = new Intent();
-
-        // setting type to select to be image
-        intent.setType("image/*");
-
-        // allowing multiple image to be selected
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
+//        Intent intent = new Intent();
+//
+//        // setting type to select to be image
+//        intent.setType("image/*");
+//
+//        // allowing multiple image to be selected
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
     }
 
     // converts a bitmap to a ParseFile
@@ -235,25 +235,13 @@ public class BrainstormFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if ((data != null) && requestCode == PICK_PHOTO_CODE) {
+            Uri photoUri = data.getData();
 
-                if(data.getClipData() != null) {
-                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                    for(int i = 0; i < count; i++) {
-                        Uri photoUri = data.getClipData().getItemAt(i).getUri();
-                        //do something with the image (save it to some directory or whatever you need to do with it here)
-                        mSelectedImage = loadFromUri(photoUri);
-                        // Load the selected image into a preview
-                        mIvPostImage.setImageBitmap(mSelectedImage);
-                    }
-                }
+            // Load the image located at photoUri into selectedImage
+            mSelectedImage = loadFromUri(photoUri);
 
-//            Uri photoUri = data.getData();
-//
-//            // Load the image located at photoUri into selectedImage
-//            mSelectedImage = loadFromUri(photoUri);
-//
-//            // Load the selected image into a preview
-//            mIvPostImage.setImageBitmap(mSelectedImage);
+            // Load the selected image into a preview
+            mIvPostImage.setImageBitmap(mSelectedImage);
         } else if ((data != null) && requestCode == CANVAS_CODE) {
 
             byte[] byteArray = data.getByteArrayExtra("image");

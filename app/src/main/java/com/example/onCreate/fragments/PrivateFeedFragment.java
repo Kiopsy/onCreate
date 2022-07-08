@@ -12,9 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
+import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.parse.FindCallback;
@@ -33,6 +35,15 @@ public class PrivateFeedFragment extends Fragment {
     private RecyclerView mRvPosts;
     private IdeaAdapter mAdapter;
     private List<Idea> mIdeas;
+    private TextView mTvFilter;
+    private FilterDialog mFilterDialog;
+
+    // Query post request codes:
+    private final int REQUEST_RECENTS = 1;
+    private final int REQUEST_ENDLESS_SCROLL = 2;
+    private final int REQUEST_STARRED  = 3;
+    private final int REQUEST_OLDEST = 4;
+    private int mCurrentFilterRequest = REQUEST_RECENTS;
 
     public PrivateFeedFragment() {
         // Required empty public constructor
@@ -67,7 +78,7 @@ public class PrivateFeedFragment extends Fragment {
                 // Triggered only when new data needs to be appended to the list
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
-                queryPosts(lastPost.getCreatedAt());
+                queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
             }
         };
 
@@ -85,7 +96,7 @@ public class PrivateFeedFragment extends Fragment {
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
                 mAdapter.clear();
-                queryPosts(null);
+                queryPosts(null, mCurrentFilterRequest);
                 mSwipeContainer.setRefreshing(false);
             }
         });
@@ -96,13 +107,32 @@ public class PrivateFeedFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        // Filter button/dialog
+        mTvFilter = view.findViewById(R.id.tvFilter);
+
+        mTvFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Creating a dialog
+                mFilterDialog = new FilterDialog(true);
+
+                // Setting dialog onClick listeners
+                mFilterDialog.setRecentOnClick(RecentOnClickListener());
+                mFilterDialog.setStarredOnClick(StarredOnClickListener());
+                mFilterDialog.setOldestOnClick(OldestOnClickListener());
+
+                // Making the dialog visible
+                mFilterDialog.showDialog(getActivity());
+            }
+        });
+
         // query posts from parse
-        queryPosts(null);
+        queryPosts(null, REQUEST_RECENTS);
     }
 
     // Use Parse to query for the last 20 posts
     // Optional: include date in endless scrolling case
-    private void queryPosts(Date date) {
+    private void queryPosts(Idea lastPost, int requestCode) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
@@ -111,14 +141,60 @@ public class PrivateFeedFragment extends Fragment {
         query.whereEqualTo("isPrivate", true);
         // find only the current user's posts
         query.whereEqualTo("user", ParseUser.getCurrentUser());
-        // loading additional posts after a date for endless scrolling
-        if (date != null) {
-            query.whereLessThan("createdAt", date);
-        }
         // limit query to latest 20 items
         query.setLimit(20);
-        // order posts by creation date (newest first)
-        query.addDescendingOrder("createdAt");
+        // Clear adapter if not endless scrolling
+        if (requestCode != REQUEST_ENDLESS_SCROLL) {
+            mAdapter.clear();
+            // Sets the request code as the current filter request
+            mCurrentFilterRequest = requestCode;
+        }
+
+        // Accounting for different query cases
+        switch (requestCode) {
+            case REQUEST_RECENTS:
+                // order posts by creation date (newest first)
+                query.addDescendingOrder("createdAt");
+                break;
+
+            case REQUEST_ENDLESS_SCROLL:
+                Date date = lastPost.getCreatedAt();
+                // Must account for current filter state when performing endless scroll
+                switch (mCurrentFilterRequest) {
+                    case REQUEST_RECENTS:
+                        if (date != null) {
+                            query.whereLessThan("createdAt", date);
+                        }
+                        query.addDescendingOrder("createdAt");
+                        break;
+
+                    case REQUEST_OLDEST:
+                        if (date != null) {
+                            query.whereGreaterThan("createdAt", date);
+                        }
+                        query.addAscendingOrder("createdAt");
+                        break;
+                    case REQUEST_STARRED:
+                        if (date != null) {
+                            query.whereLessThan("createdAt", date);
+                        }
+                        query.whereEqualTo("starred", true);
+                        query.addDescendingOrder("createdAt");
+                        break;
+                }
+                break;
+
+            case REQUEST_STARRED:
+                // order posts by upvotes (highest upvoted first)
+                query.whereEqualTo("starred", true);
+                query.addDescendingOrder("createdAt");
+                break;
+
+            case REQUEST_OLDEST:
+                // order posts by creation date (oldest first)
+                query.addAscendingOrder("createdAt");
+                break;
+        }
         // start an asynchronous call for posts
         query.findInBackground(new FindCallback<Idea>() {
             @Override
@@ -134,7 +210,7 @@ public class PrivateFeedFragment extends Fragment {
                     Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
                 }
 
-                // save received posts to list and notify adapter of new data
+                // save received posts to list and notify mAdapter of new data
                 mIdeas.addAll(feed);
                 mAdapter.notifyDataSetChanged();
             }
@@ -154,5 +230,42 @@ public class PrivateFeedFragment extends Fragment {
             }
         };
         return starListener;
+    }
+
+    // Filter dialog button onClick listeners
+    // Starred: Queries only starred posts
+    private View.OnClickListener StarredOnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                queryPosts(null, REQUEST_STARRED);
+                mFilterDialog.hideDialog();
+            }
+        };
+        return listener;
+    }
+
+    // Recent: Queries for the most recently published posts
+    private View.OnClickListener RecentOnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                queryPosts(null, REQUEST_RECENTS);
+                mFilterDialog.hideDialog();
+            }
+        };
+        return listener;
+    }
+
+    // Oldest: Queries for the oldest posts
+    private View.OnClickListener OldestOnClickListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                queryPosts(null, REQUEST_OLDEST);
+                mFilterDialog.hideDialog();
+            }
+        };
+        return listener;
     }
 }
