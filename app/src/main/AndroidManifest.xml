@@ -34,9 +34,6 @@
             android:name=".activities.CanvasActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MediaSelectActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.IdeaDetailsActivity"
             android:exported="false" />
         <activity

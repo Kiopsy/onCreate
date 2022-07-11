@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".activities.MediaSelectActivity">
+    android:orientation="vertical">
 
     <com.example.onCreate.utilities.DrawingView
         android:id="@+id/main_drawing_view"
