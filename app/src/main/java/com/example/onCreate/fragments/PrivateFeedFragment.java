@@ -66,7 +66,7 @@ public class PrivateFeedFragment extends Fragment {
         mAdapter = new IdeaAdapter(getContext(), mIdeas, true);
 
         // Init the idea Parse manager
-        mIdeaService = new IdeaService(true);
+        mIdeaService = new IdeaService(mAdapter, mIdeas, true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -83,7 +83,7 @@ public class PrivateFeedFragment extends Fragment {
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (mCurrentFilterRequest != REQUEST_SEARCH) {
                     mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
-                    updateFeed();
+                    clearSearch();
                 }
             }
         };
@@ -98,20 +98,12 @@ public class PrivateFeedFragment extends Fragment {
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 if (mCurrentFilterRequest == REQUEST_SEARCH) {
                     mCurrentFilterRequest = REQUEST_RECENTS;
                 }
 
                 mIdeaService.queryPosts(null, mCurrentFilterRequest);
-                resetFeed();
                 mSwipeContainer.setRefreshing(false);
-
-                // Clear the SearchView upon refresh
-                mSearchView.setQuery("", false);
-                mSearchView.setIconified(true);;
             }
         });
 
@@ -152,18 +144,13 @@ public class PrivateFeedFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                Log.i(TAG, newText);
-                List<Idea> query = mIdeaService.getRecentQuery();
                 mAdapter.clear();
+                mCurrentFilterRequest = REQUEST_SEARCH;
                 mIdeas.addAll(mIdeaService.searchIdeas(newText));
                 mAdapter.notifyDataSetChanged();
                 return true;
             }
         });
-
-        // query posts from parse
-        mIdeaService.queryPosts(null, REQUEST_RECENTS);
-        updateFeed();
     }
 
     // Setting on click listeners
@@ -190,7 +177,7 @@ public class PrivateFeedFragment extends Fragment {
                 mIdeaService.queryPosts(null, REQUEST_STARRED);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_STARRED;
-                resetFeed();
+                clearSearch();
             }
         };
         return listener;
@@ -204,7 +191,7 @@ public class PrivateFeedFragment extends Fragment {
                 mIdeaService.queryPosts(null, REQUEST_RECENTS);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_RECENTS;
-                resetFeed();
+                clearSearch();
             }
         };
         return listener;
@@ -218,19 +205,15 @@ public class PrivateFeedFragment extends Fragment {
                 mIdeaService.queryPosts(null, REQUEST_OLDEST);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_OLDEST;
-                resetFeed();
+                clearSearch();
             }
         };
         return listener;
     }
 
-    private void updateFeed() {
-        mIdeas.addAll(mIdeaService.getRecentQuery());
-        mAdapter.notifyDataSetChanged();
-    }
-
-    private void resetFeed() {
-        mAdapter.clear();
-        updateFeed();
+    // Clear the SearchView upon refresh
+    private void clearSearch() {
+        mSearchView.setQuery("", false);
+        mSearchView.setIconified(true);;
     }
 }

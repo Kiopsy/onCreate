@@ -2,7 +2,9 @@ package com.example.onCreate.utilities;
 
 import android.util.Log;
 
+import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.models.Idea;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -21,6 +23,8 @@ public class IdeaService {
     private static final String TAG = "IdeaService";
     private List<Idea> mRecentQuery;
     private boolean mIsPrivated;
+    private IdeaAdapter mAdapter;
+    private List<Idea> mIdeas;
 
     // Query post request codes:
     public static final int REQUEST_RECENTS = 1;
@@ -31,8 +35,10 @@ public class IdeaService {
     public static final int REQUEST_TOP  = 6;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
 
-    public IdeaService (boolean isPrivated) {
+    public IdeaService (IdeaAdapter adapter, List<Idea> ideas, boolean isPrivated) {
         this.mIsPrivated = isPrivated;
+        this.mAdapter = adapter;
+        this.mIdeas = ideas;
     }
 
     /**
@@ -49,9 +55,9 @@ public class IdeaService {
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
         query.include(Idea.KEY_USER);
+        // find only private posts
+        query.whereEqualTo("isPrivate", mIsPrivated);
         if (mIsPrivated) {
-            // find only private posts
-            query.whereEqualTo("isPrivate", true);
             // find only the current user's posts
             query.whereEqualTo("user", ParseUser.getCurrentUser());
         }
@@ -62,7 +68,7 @@ public class IdeaService {
         }
         // Clear adapter if not endless scrolling
         if (requestCode != REQUEST_ENDLESS_SCROLL) {
-//            adapter.clear();
+            mAdapter.clear();
             // Sets the request code as the current filter request
             mCurrentFilterRequest = requestCode;
         }
@@ -125,28 +131,32 @@ public class IdeaService {
                 break;
         }
 
-        try {
-            mRecentQuery = query.find();
-        } catch (ParseException e) {
-            Log.e(TAG, "Issue with getting posts", e);
-        }
+        // start an asynchronous call for posts
+        query.findInBackground(new FindCallback<Idea>() {
+            @Override
+            public void done(List<Idea> feed, com.parse.ParseException e) {
+                // check for errors
+                if (e != null) {
+                    Log.e(TAG, "Issue with getting posts", e);
+                    return;
+                }
+
+                // for debugging purposes let's print every post description to logcat
+                for (Idea idea : feed) {
+                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
+                }
+
+                // save received posts to list and notify mAdapter of new data
+                mRecentQuery = feed;
+                mIdeas.addAll(feed);
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     // Gets the idea list from the most recent query.
     public List<Idea> getRecentQuery() {
         return mRecentQuery;
-    }
-
-    // Gets all the strings from idea titles and descriptions
-    public List<String> getQueryStrings() {
-        List<String> allQueryStrings = new ArrayList<String>();
-
-        for (Idea idea : mRecentQuery) {
-            // Add title and description from the recent query into string list
-            allQueryStrings.add(idea.getTitle());
-            allQueryStrings.add(idea.getDescription());
-        }
-        return allQueryStrings;
     }
 
     // Searches most recent queries to see if it contains a specified pattern
@@ -167,35 +177,47 @@ public class IdeaService {
         return relevantIdeas;
     }
 
-    // Boyer-Moore Fast String Searching Algorithm:
-    // https://www.cs.utexas.edu/users/moore/best-ideas/string-searching/
+    /** Boyer-Moore Fast String Searching Algorithm:
+     *          Searches by the last character in the pattern
+     *
+     *  Returns true or false whether there is a pattern occurrence within a string text.
+    **/
     private boolean boyerMooreSearch(char[] pattern, char[] text) {
-        int n = text.length;
-        int m = pattern.length;
+        int textLen = text.length;
+        int patLen = pattern.length;
 
-        if (m == 0) {
+        // Accounting for the empty string case
+        if (patLen == 0) {
             return true;
         }
+
+
         Map<Character, Integer> last = new HashMap<>();
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < textLen; i++) {
             last.put(text[i], -1);
         }
-        for (int i = 0; i < m; i++) {
+        for (int i = 0; i < patLen; i++) {
             last.put(pattern[i], i);
         }
-        int i = m - 1;
-        int k = m - 1;
-        while (i < n) {
-            if (text[i] == pattern[k]) {
+
+        // Text & Pattern Pointer
+        // Note: both start at the end of the pattern text
+        int i = patLen - 1;
+        int k = patLen - 1;
+
+        // Searches through entire text
+        while (i < textLen) {
+            // Compares characters, ignoring case
+            if (Character.toLowerCase(text[i]) == Character.toLowerCase(pattern[k])) {
+                // If the pointer has reached the start of the pattern string, a match is found
                 if (k == 0) {
                     return true;
                 }
+                // Iterates backwards through text, starting at the last letter
                 i--; k--;
-            }
-            else
-            {
-                i += m - Math.min(k, 1 + last.get(text[i]));
-                k = m - 1;
+            } else {
+                i += patLen - Math.min(k, 1 + last.get(text[i]));
+                k = patLen - 1;
             }
         }
         return false;

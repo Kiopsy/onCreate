@@ -1,5 +1,11 @@
 package com.example.onCreate.fragments;
 
+import static com.example.onCreate.utilities.IdeaService.REQUEST_ENDLESS_SCROLL;
+import static com.example.onCreate.utilities.IdeaService.REQUEST_OLDEST;
+import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
+import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
+import static com.example.onCreate.utilities.IdeaService.REQUEST_TOP;
+
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.onCreate.R;
@@ -19,6 +26,7 @@ import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
+import com.example.onCreate.utilities.IdeaService;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -32,19 +40,15 @@ import java.util.List;
 public class GlobalFeedFragment extends Fragment {
 
     public static final String TAG = "GlobalFeedFragment";
-    private EndlessRecyclerViewScrollListener scrollListener;
+    private EndlessRecyclerViewScrollListener mScrollListener;
     private SwipeRefreshLayout mSwipeContainer;
     private TextView mTvFilter;
     private FilterDialog mFilterDialog;
     protected RecyclerView mRvPosts;
     protected IdeaAdapter mAdapter;
     protected List<Idea> mIdeas;
-
-    // Query post request codes:
-    private final int REQUEST_RECENTS = 1;
-    private final int REQUEST_ENDLESS_SCROLL = 2;
-    private final int REQUEST_TOP  = 3;
-    private final int REQUEST_OLDEST = 4;
+    private IdeaService mIdeaService;
+    private SearchView mSearchView;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
 
     public GlobalFeedFragment() {
@@ -63,29 +67,35 @@ public class GlobalFeedFragment extends Fragment {
         // Find recycler view
         mRvPosts = view.findViewById(R.id.rvPosts);
 
-        // Init the list of tweets and mAdapter
+        // Init the list of tweets and adapter
         mIdeas = new ArrayList<Idea>();
         mAdapter = new IdeaAdapter(getContext(), mIdeas, false);
 
+        // Init the idea Parse manager
+        mIdeaService = new IdeaService(mAdapter, mIdeas, false);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
 
-        // Recycler view setup: layout manager and mAdapter
+        // Recycler view setup: layout manager and adapter
         mRvPosts.setLayoutManager(linearLayoutManager);
         mRvPosts.setAdapter(mAdapter);
 
         // Retain an instance so that you can call `resetState()` for fresh searches
-        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        mScrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
-                queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
+                if (mCurrentFilterRequest != REQUEST_SEARCH) {
+                    mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
+                    clearSearch();
+                }
             }
         };
 
         // Adds the scroll listener to RecyclerView
-        mRvPosts.addOnScrollListener(scrollListener);
+        mRvPosts.addOnScrollListener(mScrollListener);
 
         // Refreshing swipe layout
         // Lookup the swipe container view
@@ -94,14 +104,20 @@ public class GlobalFeedFragment extends Fragment {
         mSwipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call mSwipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
-                mAdapter.clear();
-                queryPosts(null, mCurrentFilterRequest);
+                if (mCurrentFilterRequest == REQUEST_SEARCH) {
+                    mCurrentFilterRequest = REQUEST_RECENTS;
+                }
+
+                mIdeaService.queryPosts(null, mCurrentFilterRequest);
                 mSwipeContainer.setRefreshing(false);
             }
         });
+
+        // Configure the refreshing colors
+        mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         // Filter button/dialog
         mTvFilter = view.findViewById(R.id.tvFilter);
@@ -110,7 +126,7 @@ public class GlobalFeedFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Creating a dialog
-                mFilterDialog = new FilterDialog(false);
+                mFilterDialog = new FilterDialog(true);
 
                 // Setting dialog onClick listeners
                 mFilterDialog.setRecentOnClick(RecentOnClickListener());
@@ -122,95 +138,23 @@ public class GlobalFeedFragment extends Fragment {
             }
         });
 
-        // Configure the refreshing colors
-        mSwipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        // Search functionalities
+        mSearchView = view.findViewById(R.id.searchView);
+        mIdeaService.queryPosts(null, REQUEST_RECENTS);
 
-        // query posts from parse
-        queryPosts(null, REQUEST_RECENTS);
-    }
-
-    // Queries the parse database
-    private void queryPosts(Idea lastIdea, int requestCode) {
-        // specify what type of data we want to query - Post.class
-        ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
-        // include data referred by user key
-        query.include(Idea.KEY_USER);
-        // find only private posts
-        query.whereEqualTo("isPrivate", false);
-        // limit query to latest 20 items
-        query.setLimit(20);
-        // Clear adapter if not endless scrolling
-        if (requestCode != REQUEST_ENDLESS_SCROLL) {
-            mAdapter.clear();
-            // Sets the request code as the current filter request
-            mCurrentFilterRequest = requestCode;
-        }
-
-        // Accounting for different query cases
-        switch (requestCode) {
-            case REQUEST_RECENTS:
-                // order posts by creation date (newest first)
-                query.addDescendingOrder("createdAt");
-                break;
-
-            case REQUEST_ENDLESS_SCROLL:
-                Date date = lastIdea.getCreatedAt();
-                int upvotes = lastIdea.getUpvotes();
-                // Must account for current filter state when performing endless scroll
-                switch (mCurrentFilterRequest) {
-                    case REQUEST_RECENTS:
-                        if (date != null) {
-                            query.whereLessThan("createdAt", date);
-                        }
-                        query.addDescendingOrder("createdAt");
-                        break;
-
-                    case REQUEST_OLDEST:
-                        if (date != null) {
-                            query.whereGreaterThan("createdAt", date);
-                        }
-                        query.addAscendingOrder("createdAt");
-                        break;
-                    case REQUEST_TOP:
-                        if (date != null) {
-                            query.whereLessThan("upvotes", upvotes);
-                        }
-                        query.addDescendingOrder("upvotes");
-                        break;
-                }
-                break;
-
-            case REQUEST_TOP:
-                // order posts by upvotes (highest upvoted first)
-                query.addDescendingOrder("upvotes");
-                break;
-
-            case REQUEST_OLDEST:
-                // order posts by creation date (oldest first)
-                query.addAscendingOrder("createdAt");
-                break;
-        }
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Idea>() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void done(List<Idea> feed, com.parse.ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-                // for debugging purposes let's print every post description to logcat
-                for (Idea idea : feed) {
-                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
-                }
-
-                // save received posts to list and notify mAdapter of new data
-                mIdeas.addAll(feed);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mAdapter.clear();
+                mCurrentFilterRequest = REQUEST_SEARCH;
+                mIdeas.addAll(mIdeaService.searchIdeas(newText));
                 mAdapter.notifyDataSetChanged();
+                return true;
             }
         });
     }
@@ -312,8 +256,10 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryPosts(null, REQUEST_TOP);
+                mIdeaService.queryPosts(null, REQUEST_TOP);
                 mFilterDialog.hideDialog();
+                mCurrentFilterRequest = REQUEST_TOP;
+                clearSearch();
             }
         };
         return listener;
@@ -324,8 +270,10 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryPosts(null, REQUEST_RECENTS);
+                mIdeaService.queryPosts(null, REQUEST_RECENTS);
                 mFilterDialog.hideDialog();
+                mCurrentFilterRequest = REQUEST_RECENTS;
+                clearSearch();
             }
         };
         return listener;
@@ -336,8 +284,10 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                queryPosts(null, REQUEST_OLDEST);
+                mIdeaService.queryPosts(null, REQUEST_OLDEST);
                 mFilterDialog.hideDialog();
+                mCurrentFilterRequest = REQUEST_OLDEST;
+                clearSearch();
             }
         };
         return listener;
@@ -385,5 +335,11 @@ public class GlobalFeedFragment extends Fragment {
             }
         }
         return allUsers;
+    }
+
+    // Clear the SearchView upon refresh
+    private void clearSearch() {
+        mSearchView.setQuery("", false);
+        mSearchView.setIconified(true);;
     }
 }
