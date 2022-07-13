@@ -168,16 +168,6 @@ public class BrainstormFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, PICK_PHOTO_CODE);
-
-//        Intent intent = new Intent();
-//
-//        // setting type to select to be image
-//        intent.setType("image/*");
-//
-//        // allowing multiple image to be selected
-//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//        intent.setAction(Intent.ACTION_GET_CONTENT);
-//        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PHOTO_CODE);
     }
 
     // converts a bitmap to a ParseFile

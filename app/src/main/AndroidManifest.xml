@@ -16,6 +16,7 @@
         <intent>
             <action android:name="android.media.action.ACTION_PICK" />
         </intent>
+        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
     </queries>
 
     <application
@@ -57,6 +58,12 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+
+        <provider android:authorities="com.facebook.app.FacebookContentProvider569222651486008"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
     </application>
 
 </manifest>

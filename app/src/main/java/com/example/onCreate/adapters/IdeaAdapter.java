@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
 import com.example.onCreate.activities.IdeaDetailsActivity;
+import com.example.onCreate.dialogs.ShareDialog;
+import com.example.onCreate.fragments.GlobalFeedFragment;
 import com.example.onCreate.models.Idea;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -103,8 +106,10 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         private ImageView mIvUpvote;
         private ImageView mIvDownvote;
         private ImageView mIvPostImage;
-        private ConstraintLayout privateFeedButtonLayout;
-        private ConstraintLayout globalFeedButtonLayout;
+        private ConstraintLayout mPrivateFeedButtonLayout;
+        private ConstraintLayout mGlobalFeedButtonLayout;
+        private LinearLayout mShareLayout;
+        private ShareDialog mShareDialog;
 
         // Put all Views in a ViewHolder
         public ViewHolder(@NonNull View itemView) {
@@ -119,8 +124,9 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mIvPostImage = itemView.findViewById(R.id.ivPostImage);
             mIvUpvote = itemView.findViewById(R.id.ivUpvote);
             mIvDownvote = itemView.findViewById(R.id.ivDownvotes);
-            privateFeedButtonLayout = itemView.findViewById(R.id.privateFeedButtonLayout);
-            globalFeedButtonLayout = itemView.findViewById(R.id.globalFeedButtonLayout);
+            mPrivateFeedButtonLayout = itemView.findViewById(R.id.privateFeedButtonLayout);
+            mGlobalFeedButtonLayout = itemView.findViewById(R.id.globalFeedButtonLayout);
+            mShareLayout = itemView.findViewById(R.id.shareLayout);
             itemView.setOnClickListener(this);
         }
 
@@ -134,15 +140,15 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             // Display different feeds based on whether feed is private vs global
             if (mIsPrivateFeed) {
                 // Set visibility for private feed views
-                privateFeedButtonLayout.setVisibility(View.VISIBLE);
-                globalFeedButtonLayout.setVisibility(View.GONE);
+                mPrivateFeedButtonLayout.setVisibility(View.VISIBLE);
+                mGlobalFeedButtonLayout.setVisibility(View.GONE);
 
                 // Set functionality for private feed
                 mIvStars.setSelected(idea.getStarred());
             } else {
                 // Set visibility for global feed views
-                privateFeedButtonLayout.setVisibility(View.GONE);
-                globalFeedButtonLayout.setVisibility(View.VISIBLE);
+                mPrivateFeedButtonLayout.setVisibility(View.GONE);
+                mGlobalFeedButtonLayout.setVisibility(View.VISIBLE);
 
                 // Only allow users to delete their own posts
                 if (idea.getUser().getObjectId().equals(currentUser.getObjectId())) {
@@ -186,6 +192,20 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             } else {
                 mIvPostImage.setVisibility(View.GONE);
             }
+
+            mShareLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mShareDialog = new ShareDialog(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                    mShareDialog.showDialog(mContext);
+                }
+            });
+
         }
 
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea

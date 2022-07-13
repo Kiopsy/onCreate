@@ -4,15 +4,20 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../layout/custom_preview.xml" value="0.4487410071942446" />
+        <entry key="app/src/main/res/drawable-anydpi/ic_brainstorm.xml" value="0.6975" />
         <entry key="app/src/main/res/drawable-anydpi/ic_home.xml" value="0.671" />
         <entry key="app/src/main/res/drawable-anydpi/ic_star.xml" value="0.6405" />
         <entry key="app/src/main/res/drawable-anydpi/ic_trashcan.xml" value="0.7345" />
         <entry key="app/src/main/res/drawable/bottom_nav_selector.xml" value="0.7115" />
+        <entry key="app/src/main/res/drawable/color_switch_background_border.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/control_switch_background_selector.xml" value="0.671" />
         <entry key="app/src/main/res/drawable/icon_post_selectors.xml" value="0.6405" />
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
         <entry key="app/src/main/res/drawable/layout_image_circle.xml" value="0.5885" />
+        <entry key="app/src/main/res/drawable/layout_rounded_corners.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/logo.xml" value="0.7685" />
+        <entry key="app/src/main/res/drawable/rounded_corners_gray.xml" value="0.643" />
+        <entry key="app/src/main/res/drawable/share_icon.xml" value="0.643" />
         <entry key="app/src/main/res/layout/activity_canvas.xml" value="0.28020833333333334" />
         <entry key="app/src/main/res/layout/activity_idea_details.xml" value="0.4575892857142857" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />
@@ -22,6 +27,7 @@
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.32741116751269034" />
         <entry key="app/src/main/res/layout/dialog_filter.xml" value="0.736331569664903" />
         <entry key="app/src/main/res/layout/dialog_media_select.xml" value="0.18764953613281252" />
+        <entry key="app/src/main/res/layout/dialog_share.xml" value="0.6621376811594203" />
         <entry key="app/src/main/res/layout/dialog_stroke_selector.xml" value="0.4453507340946166" />
         <entry key="app/src/main/res/layout/fragment_brainstorm.xml" value="0.6626506024096386" />
         <entry key="app/src/main/res/layout/fragment_dialog_stroke_selector.xml" value="0.7479166666666667" />
