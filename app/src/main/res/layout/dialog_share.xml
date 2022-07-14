@@ -43,4 +43,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivFacebook" />
 
+<!--    <com.facebook.login.widget.LoginButton-->
+<!--        android:id="@+id/login_button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginBottom="30dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/tvMediaSelectTitle" />-->
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

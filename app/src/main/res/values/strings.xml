@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">onCreate</string>
-    <string name="facebook_app_id">1234</string>
-    <string name="fb_login_protocol_scheme">fb1234</string>
-    <string name="facebook_client_token">56789</string>
+    <string name="facebook_app_id">569222651486008</string>
+    <string name="fb_login_protocol_scheme">fb569222651486008</string>
+    <string name="facebook_client_token">93089eab7b478d959e5a0d9218a68731</string>
 </resources>

@@ -51,7 +51,6 @@
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etPassword"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
