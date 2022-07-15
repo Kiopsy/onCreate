@@ -16,7 +16,10 @@
         <intent>
             <action android:name="android.media.action.ACTION_PICK" />
         </intent>
-        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" />
+        <provider android:authorities="com.facebook.katana.provider.PlatformProvider" /> <!-- allows app to access Facebook app features -->
+        <provider android:authorities="com.facebook.orca.provider.PlatformProvider" /> <!-- allows sharing to Messenger app -->
+
+
     </queries>
 
     <application

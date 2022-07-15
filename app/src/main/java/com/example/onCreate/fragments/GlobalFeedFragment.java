@@ -88,7 +88,7 @@ public class GlobalFeedFragment extends Fragment {
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (mCurrentFilterRequest != REQUEST_SEARCH) {
-                    //mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL, false);
+                    mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL, false);
                 }
             }
         };

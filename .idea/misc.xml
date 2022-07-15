@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/drawable/bottom_nav_selector.xml" value="0.7115" />
         <entry key="app/src/main/res/drawable/color_switch_background_border.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/control_switch_background_selector.xml" value="0.671" />
+        <entry key="app/src/main/res/drawable/ic_instagram.xml" value="0.435" />
         <entry key="app/src/main/res/drawable/icon_post_selectors.xml" value="0.6405" />
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
         <entry key="app/src/main/res/drawable/layout_image_circle.xml" value="0.5885" />
@@ -35,7 +36,7 @@
         <entry key="app/src/main/res/layout/fragment_global_feed.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_private_feed.xml" value="0.4288247213779129" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/item_idea.xml" value="0.6378311157226563" />
+        <entry key="app/src/main/res/layout/item_idea.xml" value="0.5564024390243902" />
         <entry key="app/src/main/res/layout/item_private_idea.xml" value="0.4288247213779129" />
         <entry key="app/src/main/res/menu/menu_bottom_nav.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />

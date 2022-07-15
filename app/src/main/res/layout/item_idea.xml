@@ -147,7 +147,6 @@
 
     <ImageView
         android:id="@+id/ivPostImage"
-
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -179,6 +178,7 @@
         android:background="@drawable/rounded_corners_gray"
         android:clickable="true"
         android:orientation="horizontal"
+        android:elevation="2dp"
         android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ivTrash"
@@ -191,7 +191,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="2dp"
-            android:clickable="true"
             app:srcCompat="@drawable/ic_share"
             app:tint="@drawable/share_icon_selector" />
 

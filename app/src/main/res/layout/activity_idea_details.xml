@@ -145,25 +145,13 @@
             app:layout_constraintVertical_bias="0.0"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:foreground="@drawable/facebook"
-            android:paddingTop="15dp"
-
-            app:layout_constraintBottom_toBottomOf="@+id/shareLayout"
-            app:layout_constraintEnd_toStartOf="@+id/shareLayout"
-            app:layout_constraintTop_toTopOf="@+id/shareLayout" />
-
         <LinearLayout
             android:id="@+id/shareLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
+            android:elevation="2dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_corners_gray"
             android:clickable="true"
@@ -180,7 +168,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="2dp"
-                android:clickable="true"
                 app:srcCompat="@drawable/ic_share"
                 app:tint="@drawable/share_icon_selector" />
 

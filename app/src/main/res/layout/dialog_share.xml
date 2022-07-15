@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivFacebook"
+        android:id="@+id/ivInstagram"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -27,35 +27,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvMediaSelectTitle"
-        app:srcCompat="@drawable/facebook"
-        tools:srcCompat="@drawable/facebook"
-        android:visibility="gone"/>
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="30dp"
-        android:foreground="@drawable/facebook"
-        android:paddingTop="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvMediaSelectTitle" />
+        app:srcCompat="@drawable/instagram"
+        android:visibility="visible"/>
 
     <TextView
-        android:id="@+id/tvFacebook"
+        android:id="@+id/tvInstagram"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="30dp"
         android:fontFamily="@font/visby_extra_bold"
-        android:text="Facebook"
+        android:text="Instagram"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_button" />
+        app:layout_constraintTop_toBottomOf="@+id/ivInstagram" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -159,7 +159,7 @@ public class IdeaService {
                     }
 
                     // save received posts to list and notify mAdapter of new data
-                    mRecentQuery = feed;
+                    mRecentQuery.addAll(feed);
                     mIdeas.addAll(feed);
                     mAdapter.notifyDataSetChanged();
                 }

@@ -196,16 +196,10 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mShareLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mShareDialog = new PostShareDialog(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    });
+                    mShareDialog = new PostShareDialog();
                     mShareDialog.showDialog(mContext);
                 }
             });
-
         }
 
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea
