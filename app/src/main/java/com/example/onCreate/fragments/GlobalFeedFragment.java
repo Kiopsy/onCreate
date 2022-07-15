@@ -88,8 +88,7 @@ public class GlobalFeedFragment extends Fragment {
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (mCurrentFilterRequest != REQUEST_SEARCH) {
-                    mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
-                    clearSearch();
+                    //mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL, false);
                 }
             }
         };
@@ -108,7 +107,7 @@ public class GlobalFeedFragment extends Fragment {
                     mCurrentFilterRequest = REQUEST_RECENTS;
                 }
 
-                mIdeaService.queryPosts(null, mCurrentFilterRequest);
+                mIdeaService.queryPosts(null, mCurrentFilterRequest, false);
                 mSwipeContainer.setRefreshing(false);
             }
         });
@@ -126,7 +125,7 @@ public class GlobalFeedFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // Creating a dialog
-                mFilterDialog = new FilterDialog(true);
+                mFilterDialog = new FilterDialog(false);
 
                 // Setting dialog onClick listeners
                 mFilterDialog.setRecentOnClick(RecentOnClickListener());
@@ -140,7 +139,7 @@ public class GlobalFeedFragment extends Fragment {
 
         // Search functionalities
         mSearchView = view.findViewById(R.id.searchView);
-        mIdeaService.queryPosts(null, REQUEST_RECENTS);
+        mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -256,7 +255,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_TOP);
+                mIdeaService.queryPosts(null, REQUEST_TOP, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_TOP;
                 clearSearch();
@@ -270,7 +269,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_RECENTS);
+                mIdeaService.queryPosts(null, REQUEST_RECENTS, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_RECENTS;
                 clearSearch();
@@ -284,7 +283,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_OLDEST);
+                mIdeaService.queryPosts(null, REQUEST_OLDEST, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_OLDEST;
                 clearSearch();

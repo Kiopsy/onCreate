@@ -1,5 +1,6 @@
 package com.example.onCreate.adapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,14 +15,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
 import com.example.onCreate.activities.IdeaDetailsActivity;
-import com.example.onCreate.dialogs.ShareDialog;
-import com.example.onCreate.fragments.GlobalFeedFragment;
+import com.example.onCreate.dialogs.PostShareDialog;
 import com.example.onCreate.models.Idea;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
@@ -39,6 +38,7 @@ import static com.example.onCreate.fragments.PrivateFeedFragment.starOnClickList
 public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 
     private Context mContext;
+    private Activity mActivity;
     private List<Idea> mIdeas;
     private boolean mIsPrivateFeed;
 //    private View.OnClickListener mUpvoteClickListener;
@@ -109,7 +109,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         private ConstraintLayout mPrivateFeedButtonLayout;
         private ConstraintLayout mGlobalFeedButtonLayout;
         private LinearLayout mShareLayout;
-        private ShareDialog mShareDialog;
+        private PostShareDialog mShareDialog;
 
         // Put all Views in a ViewHolder
         public ViewHolder(@NonNull View itemView) {
@@ -196,7 +196,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mShareLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mShareDialog = new ShareDialog(new View.OnClickListener() {
+                    mShareDialog = new PostShareDialog(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 

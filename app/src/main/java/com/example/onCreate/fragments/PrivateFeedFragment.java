@@ -82,8 +82,7 @@ public class PrivateFeedFragment extends Fragment {
                 Idea lastPost = mIdeas.get(mIdeas.size() - 1);
                 // Add whatever code is needed to append new items to the bottom of the list
                 if (mCurrentFilterRequest != REQUEST_SEARCH) {
-                    mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL);
-                    clearSearch();
+                    mIdeaService.queryPosts(lastPost, REQUEST_ENDLESS_SCROLL, false);
                 }
             }
         };
@@ -102,7 +101,8 @@ public class PrivateFeedFragment extends Fragment {
                     mCurrentFilterRequest = REQUEST_RECENTS;
                 }
 
-                mIdeaService.queryPosts(null, mCurrentFilterRequest);
+                mIdeaService.queryPosts(null, mCurrentFilterRequest, false);
+                clearSearch();
                 mSwipeContainer.setRefreshing(false);
             }
         });
@@ -134,7 +134,7 @@ public class PrivateFeedFragment extends Fragment {
 
         // Search functionalities
         mSearchView = view.findViewById(R.id.searchView);
-        mIdeaService.queryPosts(null, REQUEST_SEARCH);
+        mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -174,7 +174,7 @@ public class PrivateFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_STARRED);
+                mIdeaService.queryPosts(null, REQUEST_STARRED, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_STARRED;
                 clearSearch();
@@ -188,7 +188,7 @@ public class PrivateFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_RECENTS);
+                mIdeaService.queryPosts(null, REQUEST_RECENTS, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_RECENTS;
                 clearSearch();
@@ -202,7 +202,7 @@ public class PrivateFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIdeaService.queryPosts(null, REQUEST_OLDEST);
+                mIdeaService.queryPosts(null, REQUEST_OLDEST, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_OLDEST;
                 clearSearch();

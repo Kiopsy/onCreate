@@ -9,7 +9,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,13 +21,25 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.onCreate.R;
 import com.example.onCreate.models.Idea;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.facebook.share.model.ShareContent;
+import com.facebook.share.model.ShareMediaContent;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.widget.ShareButton;
+import com.facebook.share.widget.ShareDialog;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class IdeaDetailsActivity extends AppCompatActivity {
 
+    private String TAG = "DetailActivity";
     private TextView mTvTitle;
     private TextView mTvDescription;
     private TextView mTvTime;
@@ -35,6 +51,10 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     private ImageView mIvDownvote;
     private ConstraintLayout privateFeedButtonLayout;
     private ConstraintLayout globalFeedButtonLayout;
+
+    private CallbackManager mCallbackManager;
+    private LoginButton mLoginButton;
+    private ShareButton kjh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +121,45 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         }
 
         setActionBarIcon();
+
+        mCallbackManager = CallbackManager.Factory.create();
+        mLoginButton = findViewById(R.id.login_button);
+
+        mLoginButton.setPermissions(Arrays.asList("public_profile"));
+        mLoginButton.registerCallback(mCallbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, "Login Success");
+
+                        int w = 100, h = 100;
+
+                        Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+                        Bitmap bmp = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+                        Canvas canvas = new Canvas(bmp);
+
+                        SharePhoto post = new SharePhoto.Builder()
+                                .setBitmap(bmp)
+                                .build();
+
+                        ShareContent shareContent = new ShareMediaContent.Builder()
+                                .addMedium(post)
+                                .build();
+
+                        ShareDialog shareDialog = new ShareDialog(IdeaDetailsActivity.this);
+                        shareDialog.show(shareContent, ShareDialog.Mode.AUTOMATIC);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "Login Cancel");
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Log.d(TAG, "Login Error" + exception);
+                    }
+                });
     }
 
     public void setActionBarIcon() {
@@ -109,5 +168,11 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

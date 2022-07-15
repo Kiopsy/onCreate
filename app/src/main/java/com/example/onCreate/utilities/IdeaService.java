@@ -21,7 +21,7 @@ import java.util.Map;
 public class IdeaService {
 
     private static final String TAG = "IdeaService";
-    private List<Idea> mRecentQuery;
+    private List<Idea> mRecentQuery = new ArrayList<>();
     private boolean mIsPrivated;
     private IdeaAdapter mAdapter;
     private List<Idea> mIdeas;
@@ -29,9 +29,9 @@ public class IdeaService {
     // Query post request codes:
     public static final int REQUEST_RECENTS = 1;
     public static final int REQUEST_ENDLESS_SCROLL = 2;
-    public static final int REQUEST_STARRED  = 3;
-    public static final int REQUEST_OLDEST = 4;
-    public static final int REQUEST_SEARCH = 5;
+    public static final int REQUEST_SEARCH = 3;
+    public static final int REQUEST_STARRED  = 4;
+    public static final int REQUEST_OLDEST = 5;
     public static final int REQUEST_TOP  = 6;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
 
@@ -50,7 +50,7 @@ public class IdeaService {
      * @param requestCode Should have the type of request code to query the
      *                    specific results accordingly.
      */
-    public void queryPosts(Idea lastIdea, int requestCode) {
+    public void queryPosts(Idea lastIdea, int requestCode, boolean isDialog) {
         // specify what type of data we want to query - Post.class
         ParseQuery<Idea> query = ParseQuery.getQuery(Idea.class);
         // include data referred by user key
@@ -69,6 +69,8 @@ public class IdeaService {
         // Clear adapter if not endless scrolling
         if (requestCode != REQUEST_ENDLESS_SCROLL) {
             mAdapter.clear();
+            // Clear current idea list
+            mRecentQuery.clear();
             // Sets the request code as the current filter request
             mCurrentFilterRequest = requestCode;
         }
@@ -131,27 +133,38 @@ public class IdeaService {
                 break;
         }
 
-        // start an asynchronous call for posts
-        query.findInBackground(new FindCallback<Idea>() {
-            @Override
-            public void done(List<Idea> feed, com.parse.ParseException e) {
-                // check for errors
-                if (e != null) {
-                    Log.e(TAG, "Issue with getting posts", e);
-                    return;
-                }
-
-                // for debugging purposes let's print every post description to logcat
-                for (Idea idea : feed) {
-                    Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
-                }
-
-                // save received posts to list and notify mAdapter of new data
-                mRecentQuery = feed;
-                mIdeas.addAll(feed);
-                mAdapter.notifyDataSetChanged();
+        // Only search in background for feed retrieving
+        if (isDialog) {
+            try {
+                mRecentQuery.addAll(query.find());
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        });
+            mIdeas.addAll(mRecentQuery);
+            mAdapter.notifyDataSetChanged();
+        } else{
+            // start an asynchronous call for posts for the feed
+            query.findInBackground(new FindCallback<Idea>() {
+                @Override
+                public void done(List<Idea> feed, com.parse.ParseException e) {
+                    // check for errors
+                    if (e != null) {
+                        Log.e(TAG, "Issue with getting posts", e);
+                        return;
+                    }
+
+                    // for debugging purposes let's print every post description to logcat
+                    for (Idea idea : feed) {
+                        Log.i(TAG, "Post: " + idea.getDescription() + ", username: " + idea.getUser().getUsername());
+                    }
+
+                    // save received posts to list and notify mAdapter of new data
+                    mRecentQuery = feed;
+                    mIdeas.addAll(feed);
+                    mAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     // Gets the idea list from the most recent query.
