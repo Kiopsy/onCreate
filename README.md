@@ -1,4 +1,5 @@
 # onCreate
+<img src='app/src/main/res/drawable/dark_onCreate_logo.png' width='250' alt='Video Walkthrough' />
 
 ## Table of Contents
 1. [Overview](#Overview)
