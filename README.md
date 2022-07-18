@@ -1,5 +1,4 @@
 # onCreate
-App README Template
 
 ## Table of Contents
 1. [Overview](#Overview)
