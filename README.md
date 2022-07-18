@@ -165,4 +165,4 @@ Idea
 ## Gifs
 
 ### Demo
-<img src='https://github.com/Kiopsy/onCreate/blob/master/onCreateWeek1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://github.com/Kiopsy/onCreate/blob/master/onCreate.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
