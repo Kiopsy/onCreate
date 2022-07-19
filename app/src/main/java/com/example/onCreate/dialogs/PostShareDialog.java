@@ -1,26 +1,35 @@
 package com.example.onCreate.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.PixelCopy;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.onCreate.R;
 
 import java.io.ByteArrayOutputStream;
 
+import javax.security.auth.callback.Callback;
+
 public class PostShareDialog extends DialogFragment {
 
-    private final String TAG = "ShareDialog";
+    private static final String TAG = "ShareDialog";
     private View.OnClickListener mFacebookClick;
     private Dialog mDialog;
 
@@ -32,24 +41,24 @@ public class PostShareDialog extends DialogFragment {
         mDialog.setCancelable(true);
         mDialog.setContentView(R.layout.dialog_share);
 
-        ImageView ivFacebook = (ImageView) mDialog.findViewById(R.id.ivInstagram);
+        ImageView ivInstagram = (ImageView) mDialog.findViewById(R.id.ivInstagram);
 
-        ivFacebook.setOnClickListener(new View.OnClickListener() {
+        ivInstagram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String application = "com.instagram.android";
+                Activity activity = (Activity) context;
+                View view = activity.findViewById(android.R.id.content).getRootView();
+                Bitmap ideaPost = getBitmapFromView(view, activity);
 
                 ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                BitmapDrawable g = (BitmapDrawable) ivFacebook.getDrawable();
+                BitmapDrawable g = (BitmapDrawable) ivInstagram.getDrawable();
                 g.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), g.getBitmap(), "Title", null);
+                String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), ideaPost, "Title", null);
 
                 Intent storiesIntent = new Intent("com.instagram.share.ADD_TO_STORY");
                 storiesIntent.setDataAndType(Uri.parse(path),  "image/*");
                 storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 storiesIntent.setPackage("com.instagram.android");
-//                getActivity().grantUriPermission(
-//                        "com.instagram.png.android", Uri.parse(path), Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 context.startActivity(storiesIntent);
                 hideDialog();
             }
@@ -58,6 +67,22 @@ public class PostShareDialog extends DialogFragment {
         mDialog.show();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static Bitmap getBitmapFromView(View view, Activity activity) {
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
+
+        int[] locations = new int[2];
+        view.getLocationInWindow(locations);
+        Rect rect = new Rect(locations[0], locations[1], locations[0] + view.getWidth(), locations[1] + view.getHeight());
+
+        PixelCopy.request(activity.getWindow(), rect, bitmap, copyResult -> {
+            if (copyResult == PixelCopy.SUCCESS) {
+                 Log.i(TAG, "PixelCopy Success");
+            }
+        }, new Handler(Looper.getMainLooper()));
+
+        return bitmap;
+    }
 
 
     public void hideDialog() {
