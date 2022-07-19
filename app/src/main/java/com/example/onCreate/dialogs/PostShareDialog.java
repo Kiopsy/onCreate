@@ -30,9 +30,9 @@ import javax.security.auth.callback.Callback;
 public class PostShareDialog extends DialogFragment {
 
     private static final String TAG = "ShareDialog";
-    private View.OnClickListener mFacebookClick;
     private Dialog mDialog;
 
+    // Dialog Constructor
     public PostShareDialog() {};
 
     public void showDialog(Context context) {
@@ -41,32 +41,36 @@ public class PostShareDialog extends DialogFragment {
         mDialog.setCancelable(true);
         mDialog.setContentView(R.layout.dialog_share);
 
+        // Instagram share button & onClickListener
         ImageView ivInstagram = (ImageView) mDialog.findViewById(R.id.ivInstagram);
-
         ivInstagram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Activity activity = (Activity) context;
                 View view = activity.findViewById(android.R.id.content).getRootView();
+
+                // Get Bitmap from post
                 Bitmap ideaPost = getBitmapFromView(view, activity);
 
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                BitmapDrawable g = (BitmapDrawable) ivInstagram.getDrawable();
-                g.getBitmap().compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                // Get Url from Bitmap
                 String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), ideaPost, "Title", null);
 
+                // Start Instagram Story Intent
                 Intent storiesIntent = new Intent("com.instagram.share.ADD_TO_STORY");
                 storiesIntent.setDataAndType(Uri.parse(path),  "image/*");
                 storiesIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 storiesIntent.setPackage("com.instagram.android");
                 context.startActivity(storiesIntent);
-                hideDialog();
+
+                // finish the dialog
+                mDialog.cancel();
             }
         });
 
         mDialog.show();
     }
 
+    // Uses the PixelCopyApi to programmatically take a screenshot of the phone & post
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static Bitmap getBitmapFromView(View view, Activity activity) {
         Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
@@ -77,15 +81,10 @@ public class PostShareDialog extends DialogFragment {
 
         PixelCopy.request(activity.getWindow(), rect, bitmap, copyResult -> {
             if (copyResult == PixelCopy.SUCCESS) {
-                 Log.i(TAG, "PixelCopy Success");
+                Log.i(TAG, "PixelCopy Success");
             }
         }, new Handler(Looper.getMainLooper()));
 
         return bitmap;
-    }
-
-
-    public void hideDialog() {
-        mDialog.cancel();
     }
 }

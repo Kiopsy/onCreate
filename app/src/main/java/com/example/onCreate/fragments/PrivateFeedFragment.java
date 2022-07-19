@@ -6,17 +6,20 @@ import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_STARRED;
 
+import android.app.SearchManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.widget.SearchView.SearchAutoComplete;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -135,6 +138,16 @@ public class PrivateFeedFragment extends Fragment {
         // Search functionalities
         mSearchView = view.findViewById(R.id.searchView);
         mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
+
+        ArrayList<String> countries = new ArrayList<>();
+
+        countries.add("France");
+        countries.add("Italy");
+
+        SearchManager manager = (SearchManager) getActivity().getSystemService(getContext().SEARCH_SERVICE);
+
+
+        mSearchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
