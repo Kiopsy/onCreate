@@ -44,5 +44,6 @@ dependencies {
     implementation 'com.github.Dhaval2404:ColorPicker:2.3'
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
     implementation 'com.codepath.libraries:asynchttpclient:2.2.0'
+    implementation 'com.github.arimorty:floatingsearchview:2.1.1'
 }
 

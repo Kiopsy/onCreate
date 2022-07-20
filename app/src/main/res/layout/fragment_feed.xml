@@ -8,18 +8,38 @@
     android:layout_height="match_parent"
     tools:context=".fragments.PrivateFeedFragment">
 
-    <SearchView
+<!--    <SearchView-->
+<!--        android:id="@+id/searchView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginEnd="20dp"-->
+<!--        android:backgroundTint="@color/white"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/tvFilter"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/tvFilter"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/tvFilter"-->
+<!--        app:theme="@style/toolbar" />-->
+
+    <com.arlib.floatingsearchview.FloatingSearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="12dp"
         android:layout_marginEnd="20dp"
-        android:backgroundTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/tvFilter"
+        android:backgroundTint="@color/dark_blue_theme"
+        android:foregroundTint="@color/dark_blue_theme"
+        app:floatingSearch_close_search_on_keyboard_dismiss="true"
+        app:floatingSearch_dimBackground="false"
+        app:floatingSearch_dismissOnOutsideTouch="true"
+        app:floatingSearch_leftActionMode="showHamburger"
+        app:floatingSearch_searchHint="Search..."
+        app:floatingSearch_showSearchKey="false"
+        app:floatingSearch_suggestionsListAnimDuration="250"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tvFilter"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvFilter"
-        app:theme="@style/toolbar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvFilter"
@@ -39,6 +59,7 @@
         android:id="@+id/swipeContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

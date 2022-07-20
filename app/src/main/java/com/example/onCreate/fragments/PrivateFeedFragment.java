@@ -6,33 +6,39 @@ import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_STARRED;
 
-import android.app.SearchManager;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.widget.SearchView.SearchAutoComplete;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
+import com.example.onCreate.models.StringSuggestion;
+import com.example.onCreate.utilities.AutoCompleteClient;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.example.onCreate.utilities.IdeaService;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Headers;
 
 public class PrivateFeedFragment extends Fragment {
 
@@ -44,7 +50,7 @@ public class PrivateFeedFragment extends Fragment {
     private List<Idea> mIdeas;
     private IdeaService mIdeaService;
     private TextView mTvFilter;
-    private SearchView mSearchView;
+    private FloatingSearchView mSearchView;
     private FilterDialog mFilterDialog;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
 
@@ -139,29 +145,50 @@ public class PrivateFeedFragment extends Fragment {
         mSearchView = view.findViewById(R.id.searchView);
         mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
 
-        ArrayList<String> countries = new ArrayList<>();
-
-        countries.add("France");
-        countries.add("Italy");
-
-        SearchManager manager = (SearchManager) getActivity().getSystemService(getContext().SEARCH_SERVICE);
-
-
-        mSearchView.setSearchableInfo(manager.getSearchableInfo(getActivity().getComponentName()));
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
+            public void onSearchTextChanged(String oldQuery, final String newText) {
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
+                //get suggestions based on newQuery
+                String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.get(SEARCH_URL + newText, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        Log.d(TAG, "onSuccess");
+
+                        JSONArray jsonArray = json.jsonArray;
+                        try {
+                            String[] test = (String[]) jsonArray.get(1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+//                        try {
+//                            //JSONArray results = jsonObject.getJSONArray("results");
+////                    Log.i(TAG, "Results: " + results.toString());
+////                    movies.addAll(Movie.fromJsonArray(results));
+////                    movieAdapter.notifyDataSetChanged();
+//
+//                        } catch (JSONException e){
+//                            Log.e(TAG, "Hit json exception", e);
+//                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.d(TAG, "onFailure" + throwable);
+                    }
+                });
+
+                ArrayList<StringSuggestion> suggestions = AutoCompleteClient.autocomplete(newText);
+                //pass them on to the search view
+                mSearchView.swapSuggestions(suggestions);
+
                 mAdapter.clear();
                 mCurrentFilterRequest = REQUEST_SEARCH;
                 mIdeas.addAll(mIdeaService.searchIdeas(newText));
                 mAdapter.notifyDataSetChanged();
-                return true;
             }
         });
     }
@@ -226,7 +253,7 @@ public class PrivateFeedFragment extends Fragment {
 
     // Clear the SearchView upon refresh
     private void clearSearch() {
-        mSearchView.setQuery("", false);
-        mSearchView.setIconified(true);;
+        mSearchView.clearQuery();
+        mSearchView.clearSearchFocus();
     }
 }

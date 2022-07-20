@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
@@ -48,7 +49,7 @@ public class GlobalFeedFragment extends Fragment {
     protected IdeaAdapter mAdapter;
     protected List<Idea> mIdeas;
     private IdeaService mIdeaService;
-    private SearchView mSearchView;
+    private FloatingSearchView mSearchView;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
 
     public GlobalFeedFragment() {
@@ -141,19 +142,13 @@ public class GlobalFeedFragment extends Fragment {
         mSearchView = view.findViewById(R.id.searchView);
         mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
 
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
+            public void onSearchTextChanged(String oldQuery, final String newText) {
                 mAdapter.clear();
                 mCurrentFilterRequest = REQUEST_SEARCH;
                 mIdeas.addAll(mIdeaService.searchIdeas(newText));
                 mAdapter.notifyDataSetChanged();
-                return true;
             }
         });
     }
@@ -338,7 +333,7 @@ public class GlobalFeedFragment extends Fragment {
 
     // Clear the SearchView upon refresh
     private void clearSearch() {
-        mSearchView.setQuery("", false);
-        mSearchView.setIconified(true);;
+        mSearchView.clearSearchFocus();
+        mSearchView.clearQuery();
     }
 }

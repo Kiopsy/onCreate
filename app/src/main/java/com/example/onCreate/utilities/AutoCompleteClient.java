@@ -3,8 +3,11 @@ package com.example.onCreate.utilities;
 import android.util.Log;
 
 import java.util.ArrayList;
+
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.onCreate.models.StringSuggestion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +29,9 @@ public class AutoCompleteClient {
      *
      * @return A list of similar strings to input for autocomplete usage.
      */
-    public static ArrayList<String> autocomplete(String search) {
+    public static ArrayList<StringSuggestion> autocomplete(String search) {
         // List of autocomplete suggestions
-        ArrayList<String> suggestions = new ArrayList<>();
+        ArrayList<StringSuggestion> suggestions = new ArrayList<>();
 
         // API client
         AsyncHttpClient client = new AsyncHttpClient();
