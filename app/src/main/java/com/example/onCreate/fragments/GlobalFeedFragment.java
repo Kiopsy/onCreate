@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,21 +23,28 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.codepath.asynchttpclient.AsyncHttpClient;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
+import com.example.onCreate.models.StringSuggestion;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.example.onCreate.utilities.IdeaService;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import okhttp3.Headers;
 
 public class GlobalFeedFragment extends Fragment {
 
@@ -119,32 +127,69 @@ public class GlobalFeedFragment extends Fragment {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        // Filter button/dialog
-        mTvFilter = view.findViewById(R.id.tvFilter);
+        // Search functionalities
+        mSearchView = view.findViewById(R.id.searchView);
 
-        mTvFilter.setOnClickListener(new View.OnClickListener() {
+        mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
+
+        // Filter menu button/dialog
+        mSearchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
             @Override
-            public void onClick(View v) {
-                // Creating a dialog
-                mFilterDialog = new FilterDialog(false);
+            public void onActionMenuItemSelected(MenuItem item) {
+                if (item.getItemId() == R.id.filterBtn) {
+                    // Creating a dialog
+                    mFilterDialog = new FilterDialog(true);
 
-                // Setting dialog onClick listeners
-                mFilterDialog.setRecentOnClick(RecentOnClickListener());
-                mFilterDialog.setTopOnClick(TopOnClickListener());
-                mFilterDialog.setOldestOnClick(OldestOnClickListener());
+                    // Setting dialog onClick listeners
+                    mFilterDialog.setRecentOnClick(RecentOnClickListener());
+                    mFilterDialog.setStarredOnClick(TopOnClickListener());
+                    mFilterDialog.setOldestOnClick(OldestOnClickListener());
 
-                // Making the dialog visible
-                mFilterDialog.showDialog(getActivity());
+                    // Making the dialog visible
+                    mFilterDialog.showDialog(getActivity());
+                }
             }
         });
 
-        // Search functionalities
-        mSearchView = view.findViewById(R.id.searchView);
-        mIdeaService.queryPosts(null, REQUEST_SEARCH, false);
 
         mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, final String newText) {
+
+                ArrayList<StringSuggestion> suggestions = new ArrayList<>();
+
+                if (newText == "") {
+                    mSearchView.swapSuggestions(new ArrayList<>());
+                }
+
+                //get suggestions based on newQuery
+                String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.get(SEARCH_URL + newText, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        Log.d(TAG, "onSuccess");
+                        JSONArray jsonArray = json.jsonArray;
+                        try {
+                            JSONArray googleSuggestions = jsonArray.getJSONArray(1 );
+
+                            int sugLen = Math.min(googleSuggestions.length(), 6);
+                            for (int i = 0; i < sugLen; i ++) {
+                                suggestions.add(new StringSuggestion(googleSuggestions.getString(i)));
+                            }
+                            //pass them on to the search view
+                            mSearchView.swapSuggestions(suggestions);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.d(TAG, "onFailure" + throwable);
+                    }
+                });
+
                 mAdapter.clear();
                 mCurrentFilterRequest = REQUEST_SEARCH;
                 mIdeas.addAll(mIdeaService.searchIdeas(newText));

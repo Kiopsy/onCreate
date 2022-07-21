@@ -36,11 +36,12 @@
         <entry key="app/src/main/res/layout/fragment_global_feed.xml" value="0.203125" />
         <entry key="app/src/main/res/layout/fragment_private_feed.xml" value="0.4288247213779129" />
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/item_idea.xml" value="0.5564024390243902" />
+        <entry key="app/src/main/res/layout/item_idea.xml" value="0.5351170568561873" />
         <entry key="app/src/main/res/layout/item_private_idea.xml" value="0.4288247213779129" />
         <entry key="app/src/main/res/menu/menu_bottom_nav.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />
         <entry key="app/src/main/res/menu/menu_canvas.xml" value="0.7479166666666667" />
+        <entry key="app/src/main/res/menu/menu_filter.xml" value="0.5401041666666667" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.5802083333333333" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.569" />
         <entry key="app/src/main/res/xml/provider_paths.xml" value="0.7479166666666667" />

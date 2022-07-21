@@ -10,13 +10,9 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:background="@drawable/layout_rounded_corners"
-        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -44,7 +40,9 @@
             android:fontFamily="@font/lato_bold"
             android:text="texting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea posttexting texting this is a sample set of text that I want to use for an example for an idea post"
             android:textAlignment="viewStart"
+            android:textAllCaps="false"
             android:textColor="@color/black"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
@@ -121,8 +119,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:paddingBottom="50dp"
+                android:paddingBottom="30dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvVotes"
                 app:srcCompat="@drawable/ic_downvote"
                 app:tint="@drawable/icon_post_selectors" />
@@ -135,31 +135,37 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvDescription"
-            app:layout_constraintVertical_bias="0.0"
             tools:srcCompat="@tools:sample/avatars" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="409dp"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"
+            android:backgroundTint="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/ivPostImage"
+            tools:layout_editor_absoluteX="1dp" />
 
         <LinearLayout
             android:id="@+id/shareLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
-            android:elevation="2dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_corners_gray"
             android:clickable="true"
+            android:elevation="2dp"
             android:orientation="horizontal"
             android:padding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivPostImage"
+            app:layout_constraintTop_toBottomOf="@+id/divider"
             app:layout_constraintVertical_bias="0.0">
 
             <ImageView
@@ -183,6 +189,5 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

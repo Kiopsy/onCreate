@@ -4,14 +4,18 @@ import android.util.Log;
 
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.models.Idea;
+import com.example.onCreate.models.StringSuggestion;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -183,11 +187,51 @@ public class IdeaService {
             char[] title = idea.getTitle().toCharArray();
 
             // Add idea to list if pattern is contained within title/description
-            if (boyerMooreSearch(pat, description) || boyerMooreSearch(pat, title)) {
+            int descriptionIndex = boyerMooreSearch(pat, description);
+            int titleIndex = boyerMooreSearch(pat, title);
+            if (descriptionIndex != -1 || titleIndex != -1) {
                 relevantIdeas.add(idea);
             }
         }
         return relevantIdeas;
+    }
+
+    public List<StringSuggestion> searchStrings(String pattern) {
+
+        // A list of ideas that contain the pattern string
+        List<StringSuggestion> relevantStrings = new ArrayList<>();
+        HashSet<String> relevantHash = new HashSet<>();
+
+        // Using the Boyer-Moore Fast String Searching Algorithm
+        char[] pat = pattern.toCharArray();
+        for (Idea idea : mRecentQuery) {
+            char[] description = idea.getDescription().toCharArray();
+            char[] title = idea.getTitle().toCharArray();
+
+            // Add idea to list if pattern is contained within title/description
+            int descriptionIndex = boyerMooreSearch(pat, description);
+            int titleIndex = boyerMooreSearch(pat, title);
+
+            if (descriptionIndex != -1) {
+                String atIndex = StringAtIndex(description, descriptionIndex);
+                if (relevantHash.size() < 7) {
+                    relevantHash.add(atIndex);
+                }
+            }
+            if (titleIndex != -1) {
+                String atIndex = StringAtIndex(title, titleIndex);
+                if (relevantHash.size() < 7) {
+                    relevantHash.add(atIndex);
+                }
+            }
+        }
+
+        Iterator<String> it = relevantHash.iterator();
+        while (it.hasNext()) {
+            relevantStrings.add(new StringSuggestion(it.next()));
+        }
+
+        return relevantStrings;
     }
 
     /** Boyer-Moore Fast String Searching Algorithm:
@@ -195,15 +239,15 @@ public class IdeaService {
      *
      *  Returns true or false whether there is a pattern occurrence within a string text.
     **/
-    private boolean boyerMooreSearch(char[] pattern, char[] text) {
+
+    private int boyerMooreSearch(char[] pattern, char[] text) {
         int textLen = text.length;
         int patLen = pattern.length;
 
         // Accounting for the empty string case
         if (patLen == 0) {
-            return true;
+            return 0;
         }
-
 
         Map<Character, Integer> last = new HashMap<>();
         for (int i = 0; i < textLen; i++) {
@@ -224,7 +268,7 @@ public class IdeaService {
             if (Character.toLowerCase(text[i]) == Character.toLowerCase(pattern[k])) {
                 // If the pointer has reached the start of the pattern string, a match is found
                 if (k == 0) {
-                    return true;
+                    return i;
                 }
                 // Iterates backwards through text, starting at the last letter
                 i--; k--;
@@ -233,6 +277,32 @@ public class IdeaService {
                 k = patLen - 1;
             }
         }
-        return false;
+        return -1;
+    }
+
+    // Searches for a complete string around an index in a char array
+    private String StringAtIndex(char[] text, int index) {
+        int l = index;
+        int r = index;
+
+        while (l != 0) {
+            if (!Character.isAlphabetic(text[l])) {
+                l++;
+                break;
+            }
+            l--;
+        }
+        while (r < text.length) {
+            if (!Character.isAlphabetic(text[r])) {
+                r--;
+                break;
+            }
+            r++;
+        }
+
+        for (int i = l; i < r; i++) {
+            text[i] = Character.toLowerCase(text[i]);
+        }
+        return new String(Arrays.copyOfRange(text, l, r + 1));
     }
 }
