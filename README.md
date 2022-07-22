@@ -61,6 +61,9 @@ An app to help brainstorm ideas and to create a social media platform for users 
 * Brainstorming Screen
     * User can create new ideas
     * User can select media (gallery images or canvas drawing)
+* Canvas Drawing Screen
+    * User can draw on their phone screen
+    * User can select different stroke sizes and colors 
 * Profile Screen
     * Displays users profile picture and description
 * Global Screen
@@ -86,6 +89,8 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * can navigate through tabs between:
         * Idea Screen
         * Brainstorming Screen
+            * Canvas Drawing
+            * Photo Gallery Select  
         * Profile Screen
         * Global Screen
 
