@@ -10,7 +10,7 @@
 ## Overview
 ### Description
 
-An app to help brainstorm ideas and to create a social media platform for users to share their ideas. The app allows users to organize/filter ideas, draw their ideas on a canvas, and distinguish their ideas between global and private feeds. 
+An app to help brainstorm ideas and to create a social media platform for users to share their ideas. Users can login/logout, and register for an account with description details and a profile picture. The app allows users to organize/filter ideas, draw their ideas on a canvas, select images from their phone gallery to post, and distinguish their ideas between global and private feeds. Users are able to upvote and downvote global posts, and are able to star their own within a private feed. Furthermore, users can filter ideas by starred/recents/oldest/top, and can search for ideas using a search view, which uses a mixed autocomplete suggestions between actual text within idea posts and Google Search's Autocomplete API. Lastly, users are able to take their post and share to their Instagram stories via an intent if Instagram is downloaded onto their phone.  
 
 ### App Evaluation
 - **Category:** Productivity / Organization
