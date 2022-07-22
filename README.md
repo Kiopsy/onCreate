@@ -17,7 +17,7 @@ An app to help brainstorm ideas and to create a social media platform for users 
 - **Mobile:** Native Android app that allows students to brainstorm their ideas, and rank and share them afterwards.
 - **Story:** Many people have tons of good ideas, but forget to write them down or do not have a good place to store these ideas. Furthermore, a social media for ideas can provide inspiration for others and could be a way to encourage and foster brainstorming.
 - **Market:** College students, workers, and anyone looking to brainstorm ideas for a company or app.
-- **Habit:** Students can brainstorm 5 minutes every day practicing brainstorming activities.
+- **Habit:** Students can brainstorm for a couple of minutes every day.
 - **Scope:** First, we intend **onCreate** to provide a place for brainstorming for individual users. Moreover, this could be expanded to provide a larger space for brainstorming that many users can use to share and rank ideas anonymously.
 
 ## Product Spec
