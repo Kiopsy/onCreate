@@ -48,6 +48,8 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * Users can send their idea post to Instagram and post it onto their Instagram story
 * Idea activity detail page
     * Users can see the details of a post in a separate activity
+    * User can star, and delete current ideas
+    * User can share to Instagram here
 
 ### 2. Screen Archetypes
 
