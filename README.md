@@ -22,9 +22,7 @@ An app to help brainstorm ideas and to create a social media platform for users 
 
 ## Product Spec
 
-### 1. User Stories (Required and Optional)
-
-**Required Must-have Stories**
+### 1. User Stories
 
 * Users can register for a new account
 * User can login/logout
@@ -36,11 +34,11 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * User can select photos from their gallery
 * Profile page that shows profile image and description
 * Navigation bar to transition between personal ideas, brainstorming, profile, etc..
-
-**Optional Nice-to-have Stories**
-
 * Filtering system for ideas
     * Different methods to filter by search
+    * Boyer Moore search algorithm
+    * Autocomplete search suggestions
+       * Google Search API to give autocomplete search results
 * Global idea page to share ideas anonymously
     * switching between top, hot, and recent ideas
     * Allows users to rank ideas (up/downvote ideas)
@@ -48,14 +46,15 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * Users can draw sketches and upload them to their feed
 * Sharing to Instagram stories
     * Users can send their idea post to Instagram and post it onto their Instagram story
-
+* Idea activity detail page
+    * Users can see the details of a post in a separate activity
 
 ### 2. Screen Archetypes
 
 * Login Screen
     * User can login
 * Registration Screen
-    * User can create a new account and add their school email
+    * User can create a new account and add a description and profile image
 * Create Profile Screen
     * User can create a new profile
 * Private Screen
@@ -72,6 +71,10 @@ An app to help brainstorm ideas and to create a social media platform for users 
 * Global Screen
     * Small tab bar to switch ideas presented in feed: top, hot, recent
     * Users can upvote/downvote public ideas
+* Idea Activity Details Screen
+    * Users can see an idea separate from other ideas
+    * Users can share to IG
+    * Users can double tap to like/star a post with haptic feedback
 
 ### 3. Navigation
 
@@ -95,9 +98,11 @@ An app to help brainstorm ideas and to create a social media platform for users 
             * Canvas Drawing
             * Photo Gallery Select  
         * Profile Screen
-            * Share to IG
+            * Idea Details Screen
+               * Share to IG
         * Global Screen
-            * Share to IG
+            * Idea Details Screen
+               * Share to IG
 
 ## Wireframes
 <!-- <img src="![](https://i.imgur.com/8XM5cq4.jpg)
