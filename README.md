@@ -1,5 +1,5 @@
 # onCreate
-<img src='app/src/main/res/drawable/dark_onCreate_logo.png' width='250' alt='Video Walkthrough' />
+<img src='app/src/main/res/drawable/dark_on_create_logo.png' width='250' />
 
 ## Table of Contents
 1. [Overview](#Overview)
@@ -10,21 +10,19 @@
 ## Overview
 ### Description
 
-An app to help brainstorm ideas and to create a social media platform for users to share their ideas. The app allows users to organize/filter ideas, draw their ideas on a canvas, and distinguish their ideas between global and private feeds. 
+An app to help brainstorm ideas and to create a social media platform for users to share their ideas. Users can login/logout, and register for an account with description details and a profile picture. The app allows users to organize/filter ideas, draw their ideas on a canvas, select images from their phone gallery to post, and distinguish their ideas between global and private feeds. Users are able to upvote and downvote global posts, and are able to star their own within a private feed. Furthermore, users can filter ideas by starred/recents/oldest/top, and can search for ideas using a search view, which uses a mixed autocomplete suggestions between actual text within idea posts and Google Search's Autocomplete API. Lastly, users are able to take their post and share to their Instagram stories via an intent if Instagram is downloaded onto their phone.  
 
 ### App Evaluation
 - **Category:** Productivity / Organization
 - **Mobile:** Native Android app that allows students to brainstorm their ideas, and rank and share them afterwards.
 - **Story:** Many people have tons of good ideas, but forget to write them down or do not have a good place to store these ideas. Furthermore, a social media for ideas can provide inspiration for others and could be a way to encourage and foster brainstorming.
 - **Market:** College students, workers, and anyone looking to brainstorm ideas for a company or app.
-- **Habit:** Students can brainstorm 5 minutes every day practicing brainstorming activities.
-- **Scope:** First, we intend **onCreate** to provide a place for brainstorming for individual users. Moreover, this could be expanded to provide a larger space for brainstorming that many users can use to share and rank ideas anonymously.
+- **Habit:** Students can brainstorm for a couple of minutes every day.
+- **Scope:** We intend **onCreate** to provide a place for brainstorming for some individual users and friends to share amongst themselves. However, this could be expanded to provide a larger space for brainstorming that many users can use to share and rank ideas anonymously and globally.
 
 ## Product Spec
 
-### 1. User Stories (Required and Optional)
-
-**Required Must-have Stories**
+### 1. User Stories
 
 * Users can register for a new account
 * User can login/logout
@@ -36,23 +34,29 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * User can select photos from their gallery
 * Profile page that shows profile image and description
 * Navigation bar to transition between personal ideas, brainstorming, profile, etc..
-
-**Optional Nice-to-have Stories**
-
 * Filtering system for ideas
     * Different methods to filter by search
+    * Boyer Moore search algorithm
+    * Autocomplete search suggestions
+       * Google Search API to give autocomplete search results
 * Global idea page to share ideas anonymously
     * switching between top, hot, and recent ideas
     * Allows users to rank ideas (up/downvote ideas)
 * Canvas drawing 
     * Users can draw sketches and upload them to their feed
+* Sharing to Instagram stories
+    * Users can send their idea post to Instagram and post it onto their Instagram story
+* Idea activity detail page
+    * Users can see the details of a post in a separate activity
+    * User can star, and delete current ideas
+    * User can share to Instagram here
 
 ### 2. Screen Archetypes
 
 * Login Screen
     * User can login
 * Registration Screen
-    * User can create a new account and add their school email
+    * User can create a new account and add a description and profile image
 * Create Profile Screen
     * User can create a new profile
 * Private Screen
@@ -61,11 +65,18 @@ An app to help brainstorm ideas and to create a social media platform for users 
 * Brainstorming Screen
     * User can create new ideas
     * User can select media (gallery images or canvas drawing)
+* Canvas Drawing Screen
+    * User can draw on their phone screen
+    * User can select different stroke sizes and colors 
 * Profile Screen
     * Displays users profile picture and description
 * Global Screen
     * Small tab bar to switch ideas presented in feed: top, hot, recent
     * Users can upvote/downvote public ideas
+* Idea Activity Details Screen
+    * Users can see an idea separate from other ideas
+    * Users can share to IG
+    * Users can double tap to like/star a post with haptic feedback
 
 ### 3. Navigation
 
@@ -86,8 +97,14 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * can navigate through tabs between:
         * Idea Screen
         * Brainstorming Screen
+            * Canvas Drawing
+            * Photo Gallery Select  
         * Profile Screen
+            * Idea Details Screen
+               * Share to IG
         * Global Screen
+            * Idea Details Screen
+               * Share to IG
 
 ## Wireframes
 <!-- <img src="![](https://i.imgur.com/8XM5cq4.jpg)
