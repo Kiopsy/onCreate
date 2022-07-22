@@ -2,6 +2,7 @@ package com.example.onCreate.activities;
 
 import static com.example.onCreate.fragments.GlobalFeedFragment.containsUser;
 import static com.example.onCreate.fragments.GlobalFeedFragment.downvoteOnClickListener;
+import static com.example.onCreate.fragments.GlobalFeedFragment.removeUser;
 import static com.example.onCreate.fragments.GlobalFeedFragment.upvoteOnClickListener;
 import static com.example.onCreate.fragments.PrivateFeedFragment.starOnClickListener;
 
@@ -9,7 +10,12 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -39,6 +45,8 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     private ImageView mIvDownvote;
     private ConstraintLayout mPrivateFeedButtonLayout;
     private ConstraintLayout mGlobalFeedButtonLayout;
+    private ConstraintLayout mLayout;
+    private final int REQUEST_DETAILS_ACTIVITY = 1231;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +54,10 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_idea_details);
 
         Idea idea = (Idea) getIntent().getParcelableExtra("idea");
+
+        Intent intent = new Intent();
+        intent.putExtra("idea", idea);
+        setResult(REQUEST_DETAILS_ACTIVITY, intent);
 
         mTvDescription = findViewById(R.id.tvDescription);
         mTvTime = findViewById(R.id.tvTime);
@@ -61,6 +73,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         mTvTitle.setText(idea.getTitle());
         mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
         mShareLayout = findViewById(R.id.shareLayout);
+        mLayout = findViewById(R.id.constraintLayout);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
 
@@ -111,6 +124,60 @@ public class IdeaDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mShareDialog = new PostShareDialog();
                 mShareDialog.showDialog(IdeaDetailsActivity.this);
+            }
+        });
+
+        mLayout.setOnTouchListener(new View.OnTouchListener() {
+            private GestureDetector gestureDetector = new GestureDetector(IdeaDetailsActivity.this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    Log.d("TEST", "onDoubleTap");
+                    if (idea.getVisibility()) {
+                        idea.setStarred(true);
+                        mIvStars.setSelected(true);
+                        idea.saveInBackground();
+                    } else {
+                        // Check if current user is already upvoted on the post
+                        ParseUser currentUser = ParseUser.getCurrentUser();
+                        ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
+                        ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+                        boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                        boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
+                        int upvotes = idea.getUpvotes();
+                        int downvotes = idea.getDownvotes();
+
+                        if (!hasUpvoted) {
+                            // Upvote a post: add current user to upvote list and change the upvote count
+                            if (hasDownvoted) {
+                                idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
+                                idea.setDownvotes(idea.getDownvotes() - 1);
+                                downvotes--;
+                                mIvDownvote.setSelected(false);
+                            }
+                            idea.add("upvoteUsers", currentUser);
+                            idea.setUpvotes(idea.getUpvotes() + 1);
+                            upvotes++;
+                        }
+
+                        // Change upvote text & image based on previous interaction
+                        mIvUpvote.setSelected(true);
+                        mTvVotes.setText(Integer.toString(upvotes - downvotes));
+
+                        idea.saveInBackground();
+                    }
+                    mLayout.performHapticFeedback(
+                            HapticFeedbackConstants.VIRTUAL_KEY,
+                            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING  // Ignore device's setting. Otherwise, you can use FLAG_IGNORE_VIEW_SETTING to ignore view's setting.
+                    );
+                    return super.onDoubleTap(e);
+                }
+        });
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("TEST", "Raw event: " + event.getAction() + ", (" + event.getRawX() + ", " + event.getRawY() + ")");
+                gestureDetector.onTouchEvent(event);
+                return true;
             }
         });
 

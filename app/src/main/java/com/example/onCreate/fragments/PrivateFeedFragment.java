@@ -184,7 +184,6 @@ public class PrivateFeedFragment extends Fragment {
 
         suggestions.addAll(mIdeaService.searchStrings(newText));
 
-
         //get suggestions based on newQuery
         String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
 

@@ -178,6 +178,9 @@ public class IdeaService {
 
     // Searches most recent queries to see if it contains a specified pattern
     public List<Idea> searchIdeas(String pattern) {
+
+        pattern = fixString(pattern);
+
         // A list of ideas that contain the pattern string
         List<Idea> relevantIdeas = new ArrayList<Idea>();
         // Using the Boyer-Moore Fast String Searching Algorithm
@@ -198,6 +201,7 @@ public class IdeaService {
 
     public List<StringSuggestion> searchStrings(String pattern) {
 
+        pattern = fixString(pattern);
         // A list of ideas that contain the pattern string
         List<StringSuggestion> relevantStrings = new ArrayList<>();
         HashSet<String> relevantHash = new HashSet<>();
@@ -232,6 +236,19 @@ public class IdeaService {
         }
 
         return relevantStrings;
+    }
+
+    private String fixString(String pattern) {
+        char[] pat = pattern.toCharArray();
+        StringBuilder builder = new StringBuilder(pat.length);
+        for(char ch: pat)
+        {
+            if (ch != 0) {
+                builder.append(ch);
+            }
+        }
+        return builder.toString();
+
     }
 
     /** Boyer-Moore Fast String Searching Algorithm:

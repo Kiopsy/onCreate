@@ -207,33 +207,4 @@ public class CanvasActivity extends AppCompatActivity {
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
     }
-
-//    private void requestPermissionsAndSaveBitmap()
-//    {
-//        if (PermissionManager.checkWriteStoragePermissions(this))
-//        {
-//            Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
-//            //startShareDialog(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-//    {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        switch (requestCode)
-//        {
-//            case PermissionManager.REQUEST_WRITE_STORAGE:
-//            {
-//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                {
-//                    Uri uri = FileManager.saveBitmap(this, mDrawingView.getBitmap());
-//                    //startShareDialog(uri);
-//                } else
-//                {
-//                    Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        }
-//    }
 }

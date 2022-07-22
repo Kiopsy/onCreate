@@ -23,6 +23,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
@@ -43,6 +44,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Headers;
 
@@ -59,6 +61,7 @@ public class GlobalFeedFragment extends Fragment {
     private IdeaService mIdeaService;
     private FloatingSearchView mSearchView;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
+    private AtomicBoolean mClear = new AtomicBoolean();
 
     public GlobalFeedFragment() {
         // Required empty public constructor
@@ -151,51 +154,79 @@ public class GlobalFeedFragment extends Fragment {
             }
         });
 
-
         mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, final String newText) {
-
-                ArrayList<StringSuggestion> suggestions = new ArrayList<>();
-
-                if (newText == "") {
-                    mSearchView.swapSuggestions(new ArrayList<>());
-                }
-
-                //get suggestions based on newQuery
-                String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.get(SEARCH_URL + newText, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.d(TAG, "onSuccess");
-                        JSONArray jsonArray = json.jsonArray;
-                        try {
-                            JSONArray googleSuggestions = jsonArray.getJSONArray(1 );
-
-                            int sugLen = Math.min(googleSuggestions.length(), 6);
-                            for (int i = 0; i < sugLen; i ++) {
-                                suggestions.add(new StringSuggestion(googleSuggestions.getString(i)));
-                            }
-                            //pass them on to the search view
-                            mSearchView.swapSuggestions(suggestions);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.d(TAG, "onFailure" + throwable);
-                    }
-                });
-
-                mAdapter.clear();
-                mCurrentFilterRequest = REQUEST_SEARCH;
-                mIdeas.addAll(mIdeaService.searchIdeas(newText));
-                mAdapter.notifyDataSetChanged();
+                mClear.set(false);
+                search(newText);
             }
         });
+
+        mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            @Override
+            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
+                char[] test = searchSuggestion.getBody().toCharArray();
+                mSearchView.setSearchText(searchSuggestion.getBody());
+                mSearchView.clearSearchFocus();
+                mClear.set(true);
+                search(searchSuggestion.getBody());
+            }
+
+            @Override
+            public void onSearchAction(String currentQuery) {
+                mClear.set(true);
+                search(currentQuery);
+                mSearchView.clearSearchFocus();
+            }
+        });
+    }
+
+    private void search(String newText) {
+        ArrayList<StringSuggestion> suggestions = new ArrayList<>();
+
+        suggestions.addAll(mIdeaService.searchStrings(newText));
+
+
+        //get suggestions based on newQuery
+        String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(SEARCH_URL + newText, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.d(TAG, "onSuccess");
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    JSONArray googleSuggestions = jsonArray.getJSONArray(1);
+
+                    int sugLen = Math.min(googleSuggestions.length() - suggestions.size(), 6 - suggestions.size());
+                    for (int i = 0; i < sugLen; i ++) {
+                        suggestions.add(new StringSuggestion(googleSuggestions.getString(i)));
+                    }
+
+
+                    if (!mClear.get()) {
+                        //pass them on to the search view
+                        mSearchView.swapSuggestions(suggestions);
+                    } else {
+                        mSearchView.clearSuggestions();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.d(TAG, "onFailure" + throwable);
+            }
+        });
+
+        mAdapter.clear();
+        mCurrentFilterRequest = REQUEST_SEARCH;
+        mIdeas.addAll(mIdeaService.searchIdeas(newText));
+        mAdapter.notifyDataSetChanged();
     }
 
     // Setting on click listeners
@@ -251,8 +282,8 @@ public class GlobalFeedFragment extends Fragment {
         ImageView ivDownvote = itemView.findViewById(R.id.ivDownvotes);
         TextView tvVotes = itemView.findViewById(R.id.tvVotes);
 
-        // Creating the upvoteListener
-        View.OnClickListener upvoteListener = new View.OnClickListener() {
+        // Creating the downvoteListener
+        View.OnClickListener downvoteListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Check if current user is already upvoted on the post
@@ -286,7 +317,7 @@ public class GlobalFeedFragment extends Fragment {
                 idea.saveInBackground();
             }
         };
-        return upvoteListener;
+        return downvoteListener;
     }
 
     // Filter dialog button onClick listeners

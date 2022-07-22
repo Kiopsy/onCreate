@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -25,6 +28,7 @@ import com.example.onCreate.models.Idea;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -38,14 +42,10 @@ import static com.example.onCreate.fragments.PrivateFeedFragment.starOnClickList
 public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 
     private Context mContext;
-    private Activity mActivity;
     private List<Idea> mIdeas;
     private boolean mIsPrivateFeed;
-//    private View.OnClickListener mUpvoteClickListener;
-//    private View.OnClickListener mDownvoteClickListener;
-//    private View.OnClickListener mStarClickListener;
-//    private View.OnClickListener mTrashClickListener;
     private final String TAG = "IdeaAdapter";
+    private final int REQUEST_DETAIL_ACTIVITY = 1231;
 
     // Pass in context, list of ideas, and a bool to distinguish whether adapter is used for global vs private feeds
     public IdeaAdapter(Context context, List<Idea> ideas, boolean isPrivateFeed) {
@@ -75,24 +75,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
     public int getItemCount() {
         return mIdeas.size();
     }
-
-    // TODO: not sure how to properly set these click listeners
-//    // Set all the click listeners for image buttons: up/downvote, trash, star
-//    public void setUpvoteClickListener(View.OnClickListener mUpvoteClickListener) {
-//        this.mUpvoteClickListener = mUpvoteClickListener;
-//    }
-//
-//    public void setDownvoteClickListener(View.OnClickListener mDownvoteClickListener) {
-//        this.mDownvoteClickListener = mDownvoteClickListener;
-//    }
-//
-//    public void setStarClickListener(View.OnClickListener mStarClickListener) {
-//        this.mStarClickListener = mStarClickListener;
-//    }
-//
-//    public void setTrashClickListener(View.OnClickListener mTrashClickListener) {
-//        this.mTrashClickListener = mTrashClickListener;
-//    }
 
     // Define a ViewHolder to connect UI with Backend
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -135,41 +117,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mTvDescription.setText(idea.getDescription());
             mTvTitle.setText(idea.getTitle()); mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
 
-            ParseUser currentUser = ParseUser.getCurrentUser();
-
-            // Display different feeds based on whether feed is private vs global
-            if (mIsPrivateFeed) {
-                // Set visibility for private feed views
-                mPrivateFeedButtonLayout.setVisibility(View.VISIBLE);
-                mGlobalFeedButtonLayout.setVisibility(View.GONE);
-
-                // Set functionality for private feed
-                mIvStars.setSelected(idea.getStarred());
-            } else {
-                // Set visibility for global feed views
-                mPrivateFeedButtonLayout.setVisibility(View.GONE);
-                mGlobalFeedButtonLayout.setVisibility(View.VISIBLE);
-
-                // Only allow users to delete their own posts
-                if (idea.getUser().getObjectId().equals(currentUser.getObjectId())) {
-                    mIvTrash.setVisibility(View.VISIBLE);
-                } else {
-                    mIvTrash.setVisibility(View.GONE);
-                }
-
-
-                // Set functionality for global feed
-                ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
-                ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
-
-                boolean isUpvoteSelected = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
-                mIvUpvote.setSelected(isUpvoteSelected);
-
-                boolean isDownvoteSelected = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
-                mIvDownvote.setSelected(isDownvoteSelected);
-
-                mTvVotes.setText(Integer.toString(idea.getUpvotes() - idea.getDownvotes()));
-            }
+            setIdeaVisuals(idea);
 
             // Set all the click listeners for image buttons: up/downvote, trash, star
             mIvUpvote.setOnClickListener(upvoteOnClickListener(itemView, idea));
@@ -215,7 +163,53 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 Intent intent = new Intent(mContext, IdeaDetailsActivity.class);
                 intent.putExtra("idea", idea);
                 // show the activity
+                Activity activity = (Activity) mContext;
+                //activity.startActivityForResult(intent, REQUEST_DETAIL_ACTIVITY);
+
                 mContext.startActivity(intent);
+
+                setIdeaVisuals(idea);
+
+            }
+        }
+
+
+        // Sets the idea visuals (starred, up/downvotes) based on the idea's state
+        private void setIdeaVisuals(Idea idea) {
+            ParseUser currentUser = ParseUser.getCurrentUser();
+
+            // Display different feeds based on whether feed is private vs global
+            if (mIsPrivateFeed) {
+                // Set visibility for private feed views
+                mPrivateFeedButtonLayout.setVisibility(View.VISIBLE);
+                mGlobalFeedButtonLayout.setVisibility(View.GONE);
+
+                // Set functionality for private feed
+                mIvStars.setSelected(idea.getStarred());
+            } else {
+                // Set visibility for global feed views
+                mPrivateFeedButtonLayout.setVisibility(View.GONE);
+                mGlobalFeedButtonLayout.setVisibility(View.VISIBLE);
+
+                // Only allow users to delete their own posts
+                if (idea.getUser().getObjectId().equals(currentUser.getObjectId())) {
+                    mIvTrash.setVisibility(View.VISIBLE);
+                } else {
+                    mIvTrash.setVisibility(View.GONE);
+                }
+
+
+                // Set functionality for global feed
+                ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
+                ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+
+                boolean isUpvoteSelected = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
+                mIvUpvote.setSelected(isUpvoteSelected);
+
+                boolean isDownvoteSelected = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
+                mIvDownvote.setSelected(isDownvoteSelected);
+
+                mTvVotes.setText(Integer.toString(idea.getUpvotes() - idea.getDownvotes()));
             }
         }
     }
