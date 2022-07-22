@@ -1,5 +1,5 @@
 # onCreate
-<img src='app/src/main/res/drawable/dark_onCreate_logo.png' width='250' alt='Video Walkthrough' />
+<img src='app/src/main/res/drawable/dark_on_create_logo.png' width='250' />
 
 ## Table of Contents
 1. [Overview](#Overview)
