@@ -179,14 +179,17 @@ public class PrivateFeedFragment extends Fragment {
         });
     }
 
+    // Function to search for a specific text and to add suggestions in SearchView
     private void search(String newText) {
         ArrayList<StringSuggestion> suggestions = new ArrayList<>();
 
+        // Add suggestions based on ideas currently in database
         suggestions.addAll(mIdeaService.searchStrings(newText));
 
         //get suggestions based on newQuery
         String SEARCH_URL = "https://suggestqueries.google.com/complete/search?client=firefox&q=";
 
+        // Connect with Google Search API
         AsyncHttpClient client = new AsyncHttpClient();
         client.get(SEARCH_URL + newText, new JsonHttpResponseHandler() {
             @Override
@@ -196,12 +199,15 @@ public class PrivateFeedFragment extends Fragment {
                 try {
                     JSONArray googleSuggestions = jsonArray.getJSONArray(1);
 
+                    // Change the length of the suggestion list based on current suggestion size from database
                     int sugLen = Math.min(googleSuggestions.length() - suggestions.size(), 6 - suggestions.size());
+
+                    // Add remaining suggestions from Google Search API
                     for (int i = 0; i < sugLen; i ++) {
                         suggestions.add(new StringSuggestion(googleSuggestions.getString(i)));
                     }
 
-
+                    // Boolean to distinguish between when to clear search ideas
                     if (!mClear.get()) {
                         //pass them on to the search view
                         mSearchView.swapSuggestions(suggestions);

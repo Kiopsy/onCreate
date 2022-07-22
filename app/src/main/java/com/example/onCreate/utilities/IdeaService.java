@@ -268,10 +268,10 @@ public class IdeaService {
 
         Map<Character, Integer> last = new HashMap<>();
         for (int i = 0; i < textLen; i++) {
-            last.put(text[i], -1);
+            last.put(Character.toLowerCase(text[i]), -1);
         }
         for (int i = 0; i < patLen; i++) {
-            last.put(pattern[i], i);
+            last.put(Character.toLowerCase(pattern[i]), i);
         }
 
         // Text & Pattern Pointer
@@ -290,7 +290,7 @@ public class IdeaService {
                 // Iterates backwards through text, starting at the last letter
                 i--; k--;
             } else {
-                i += patLen - Math.min(k, 1 + last.get(text[i]));
+                i += patLen - Math.min(k, 1 + last.get(Character.toLowerCase(text[i])));
                 k = patLen - 1;
             }
         }

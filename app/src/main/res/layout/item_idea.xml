@@ -180,6 +180,7 @@
         android:orientation="horizontal"
         android:elevation="2dp"
         android:padding="5dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ivTrash"
         app:layout_constraintTop_toBottomOf="@+id/divider"
