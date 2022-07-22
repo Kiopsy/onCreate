@@ -46,6 +46,9 @@ An app to help brainstorm ideas and to create a social media platform for users 
     * Allows users to rank ideas (up/downvote ideas)
 * Canvas drawing 
     * Users can draw sketches and upload them to their feed
+* Sharing to Instagram stories
+    * Users can send their idea post to Instagram and post it onto their Instagram story
+
 
 ### 2. Screen Archetypes
 
@@ -92,7 +95,9 @@ An app to help brainstorm ideas and to create a social media platform for users 
             * Canvas Drawing
             * Photo Gallery Select  
         * Profile Screen
+            * Share to IG
         * Global Screen
+            * Share to IG
 
 ## Wireframes
 <!-- <img src="![](https://i.imgur.com/8XM5cq4.jpg)
