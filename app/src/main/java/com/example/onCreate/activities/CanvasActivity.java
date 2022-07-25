@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 
-// Code used from: https://github.com/martinbaciga/android-drawing-canvas
+// Code extended from: https://github.com/martinbaciga/android-drawing-canvas
 public class CanvasActivity extends AppCompatActivity {
 
     private DrawingView mDrawingView;
