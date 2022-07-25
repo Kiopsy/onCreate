@@ -184,6 +184,12 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         setActionBarIcon();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_to_left, R.anim.exit_to_left);
+    }
+
     public void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setIcon(R.drawable.logo);

@@ -6,8 +6,14 @@ import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_STARRED;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +32,7 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
+import com.example.onCreate.activities.IdeaDetailsActivity;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
@@ -47,13 +54,13 @@ import okhttp3.Headers;
 public class PrivateFeedFragment extends Fragment {
 
     private static final String TAG = "PrivateFeedFragment";
+    private static final int REQUEST_DETAIL_ACTIVITY = 1231;
     private EndlessRecyclerViewScrollListener mScrollListener;
     private SwipeRefreshLayout mSwipeContainer;
     private RecyclerView mRvPosts;
     private IdeaAdapter mAdapter;
     private List<Idea> mIdeas;
     private IdeaService mIdeaService;
-    private TextView mTvFilter;
     private FloatingSearchView mSearchView;
     private FilterDialog mFilterDialog;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
@@ -163,7 +170,6 @@ public class PrivateFeedFragment extends Fragment {
         mSearchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
             @Override
             public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
-                char[] test = searchSuggestion.getBody().toCharArray();
                 mSearchView.setSearchText(searchSuggestion.getBody());
                 mSearchView.clearSearchFocus();
                 mClear.set(true);
@@ -289,6 +295,18 @@ public class PrivateFeedFragment extends Fragment {
             }
         };
         return listener;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if ((data != null) && requestCode == REQUEST_DETAIL_ACTIVITY) {
+            Idea idea = data.getParcelableExtra("idea");
+            int position = data.getIntExtra("position", 0);
+            mIdeas.set(position, idea);
+            mAdapter.notifyDataSetChanged();
+            mRvPosts.smoothScrollToPosition(position);
+        }
     }
 
     // Clear the SearchView upon refresh

@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 Fragment fragment = null;
                 // Accounting for all fragments/screens
                 switch (item.getItemId()) {
@@ -50,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new ProfileFragment();
                         break;
                 }
-                mFragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                mFragmentManager.beginTransaction()
+                                .replace(R.id.flContainer, fragment)
+                                .commit();
                 return true;
             }
         });

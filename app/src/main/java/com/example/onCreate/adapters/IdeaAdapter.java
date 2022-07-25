@@ -5,10 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -28,7 +25,6 @@ import com.example.onCreate.models.Idea;
 import com.parse.DeleteCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -157,25 +153,27 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             int position = getAdapterPosition();
             // make sure the position is valid, i.e. actually exists in the view
             if (position != RecyclerView.NO_POSITION) {
-                // get the movie at the position, this won't work if the class is static
                 Idea idea = mIdeas.get(position);
+                // get the movie at the position, this won't work if the class is static
                 // create intent for the new activity
+
                 Intent intent = new Intent(mContext, IdeaDetailsActivity.class);
                 intent.putExtra("idea", idea);
+                intent.putExtra("position", position);
+
                 // show the activity
                 Activity activity = (Activity) mContext;
-                //activity.startActivityForResult(intent, REQUEST_DETAIL_ACTIVITY);
 
-                mContext.startActivity(intent);
+                activity.startActivityForResult(intent, REQUEST_DETAIL_ACTIVITY);
+                activity.overridePendingTransition(R.anim.slide_to_right, R.anim.exit_to_right);
 
-                setIdeaVisuals(idea);
-
+                notifyDataSetChanged();
             }
         }
 
 
         // Sets the idea visuals (starred, up/downvotes) based on the idea's state
-        private void setIdeaVisuals(Idea idea) {
+        public void setIdeaVisuals(Idea idea) {
             ParseUser currentUser = ParseUser.getCurrentUser();
 
             // Display different feeds based on whether feed is private vs global
