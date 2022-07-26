@@ -46,6 +46,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     private ConstraintLayout mPrivateFeedButtonLayout;
     private ConstraintLayout mGlobalFeedButtonLayout;
     private ConstraintLayout mLayout;
+    private Idea mIdea;
     private final int REQUEST_DETAILS_ACTIVITY = 1231;
 
     @Override
@@ -53,10 +54,10 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_idea_details);
 
-        Idea idea = (Idea) getIntent().getParcelableExtra("idea");
+        mIdea = (Idea) getIntent().getParcelableExtra("idea");
 
         Intent intent = new Intent();
-        intent.putExtra("idea", idea);
+        intent.putExtra("idea", mIdea);
         setResult(REQUEST_DETAILS_ACTIVITY, intent);
 
         mTvDescription = findViewById(R.id.tvDescription);
@@ -69,30 +70,30 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         mIvDownvote = findViewById(R.id.ivDownvotes);
         mPrivateFeedButtonLayout = findViewById(R.id.privateFeedButtonLayout);
         mGlobalFeedButtonLayout = findViewById(R.id.globalFeedButtonLayout);
-        mTvDescription.setText(idea.getDescription());
-        mTvTitle.setText(idea.getTitle());
-        mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
+        mTvDescription.setText(mIdea.getDescription());
+        mTvTitle.setText(mIdea.getTitle());
+        mTvTime.setText(mIdea.calculateTimeAgo(mIdea.getCreatedAt()));
         mShareLayout = findViewById(R.id.shareLayout);
         mLayout = findViewById(R.id.constraintLayout);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
 
         // Display different feeds based on whether feed is private vs global
-        if (idea.getVisibility()) {
+        if (mIdea.getVisibility()) {
             // Set visibility for private feed views
             mPrivateFeedButtonLayout.setVisibility(View.VISIBLE);
             mGlobalFeedButtonLayout.setVisibility(View.GONE);
 
             // Set functionality for private feed
-            mIvStars.setSelected(idea.getStarred());
+            mIvStars.setSelected(mIdea.getStarred());
         } else {
             // Set visibility for global feed views
             mPrivateFeedButtonLayout.setVisibility(View.GONE);
             mGlobalFeedButtonLayout.setVisibility(View.VISIBLE);
 
             // Set functionality for global feed
-            ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
-            ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+            ArrayList<ParseUser> upvoteUsers = mIdea.getUpvoteUsers();
+            ArrayList<ParseUser> downvoteUsers = mIdea.getDownvoteUsers();
 
             boolean isUpvoteSelected = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
             mIvUpvote.setSelected(isUpvoteSelected);
@@ -100,18 +101,18 @@ public class IdeaDetailsActivity extends AppCompatActivity {
             boolean isDownvoteSelected = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
             mIvDownvote.setSelected(isDownvoteSelected);
 
-            mTvVotes.setText(Integer.toString(idea.getUpvotes() - idea.getDownvotes()));
+            mTvVotes.setText(Integer.toString(mIdea.getUpvotes() - mIdea.getDownvotes()));
         }
 
         View rootView = findViewById(android.R.id.content).getRootView();
 
         // Set all the click listeners for image buttons: up/downvote, trash, star
-        mIvUpvote.setOnClickListener(upvoteOnClickListener(rootView, idea));
-        mIvDownvote.setOnClickListener(downvoteOnClickListener(rootView, idea));
-        mIvStars.setOnClickListener(starOnClickListener(rootView, idea));
+        mIvUpvote.setOnClickListener(upvoteOnClickListener(rootView, mIdea));
+        mIvDownvote.setOnClickListener(downvoteOnClickListener(rootView, mIdea));
+        mIvStars.setOnClickListener(starOnClickListener(rootView, mIdea));
 
         // Post description
-        ParseFile image = idea.getImage();
+        ParseFile image = mIdea.getImage();
         if (image != null) {
             mIvPostImage.setVisibility(View.VISIBLE);
             Glide.with(IdeaDetailsActivity.this).load(image.getUrl()).into(mIvPostImage);
@@ -132,30 +133,30 @@ public class IdeaDetailsActivity extends AppCompatActivity {
                 @Override
                 public boolean onDoubleTap(MotionEvent e) {
                     Log.d("TEST", "onDoubleTap");
-                    if (idea.getVisibility()) {
-                        idea.setStarred(true);
+                    if (mIdea.getVisibility()) {
+                        mIdea.setStarred(true);
                         mIvStars.setSelected(true);
-                        idea.saveInBackground();
+                        mIdea.saveInBackground();
                     } else {
                         // Check if current user is already upvoted on the post
                         ParseUser currentUser = ParseUser.getCurrentUser();
-                        ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();
-                        ArrayList<ParseUser> downvoteUsers = idea.getDownvoteUsers();
+                        ArrayList<ParseUser> upvoteUsers = mIdea.getUpvoteUsers();
+                        ArrayList<ParseUser> downvoteUsers = mIdea.getDownvoteUsers();
                         boolean hasUpvoted = upvoteUsers != null ? containsUser(upvoteUsers, currentUser) : false;
                         boolean hasDownvoted = downvoteUsers != null ? containsUser(downvoteUsers, currentUser) : false;
-                        int upvotes = idea.getUpvotes();
-                        int downvotes = idea.getDownvotes();
+                        int upvotes = mIdea.getUpvotes();
+                        int downvotes = mIdea.getDownvotes();
 
                         if (!hasUpvoted) {
                             // Upvote a post: add current user to upvote list and change the upvote count
                             if (hasDownvoted) {
-                                idea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
-                                idea.setDownvotes(idea.getDownvotes() - 1);
+                                mIdea.setDownvoteUsers(removeUser(downvoteUsers, currentUser));
+                                mIdea.setDownvotes(mIdea.getDownvotes() - 1);
                                 downvotes--;
                                 mIvDownvote.setSelected(false);
                             }
-                            idea.add("upvoteUsers", currentUser);
-                            idea.setUpvotes(idea.getUpvotes() + 1);
+                            mIdea.add("upvoteUsers", currentUser);
+                            mIdea.setUpvotes(mIdea.getUpvotes() + 1);
                             upvotes++;
                         }
 
@@ -163,7 +164,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
                         mIvUpvote.setSelected(true);
                         mTvVotes.setText(Integer.toString(upvotes - downvotes));
 
-                        idea.saveInBackground();
+                        mIdea.saveInBackground();
                     }
                     mLayout.performHapticFeedback(
                             HapticFeedbackConstants.VIRTUAL_KEY,
@@ -188,6 +189,8 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_to_left, R.anim.exit_to_left);
+        setResult(REQUEST_DETAILS_ACTIVITY);
+        finish();
     }
 
     public void setActionBarIcon() {

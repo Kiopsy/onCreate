@@ -300,14 +300,11 @@ public class PrivateFeedFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if ((data != null) && requestCode == REQUEST_DETAIL_ACTIVITY) {
-            Idea idea = data.getParcelableExtra("idea");
-            int position = data.getIntExtra("position", 0);
-            mIdeas.set(position, idea);
+        if (resultCode == REQUEST_DETAIL_ACTIVITY) {
             mAdapter.notifyDataSetChanged();
-            mRvPosts.smoothScrollToPosition(position);
         }
     }
+
 
     // Clear the SearchView upon refresh
     private void clearSearch() {

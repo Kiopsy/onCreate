@@ -166,8 +166,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 
                 activity.startActivityForResult(intent, REQUEST_DETAIL_ACTIVITY);
                 activity.overridePendingTransition(R.anim.slide_to_right, R.anim.exit_to_right);
-
-                notifyDataSetChanged();
             }
         }
 
