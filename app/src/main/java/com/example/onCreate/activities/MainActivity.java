@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,7 @@ import com.example.onCreate.fragments.BrainstormFragment;
 import com.example.onCreate.fragments.GlobalFeedFragment;
 import com.example.onCreate.fragments.PrivateFeedFragment;
 import com.example.onCreate.fragments.ProfileFragment;
+import com.example.onCreate.models.Idea;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.ParseUser;
 
@@ -23,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView mBottomNavView;
     private final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private Fragment mFragment = null;
+    private int currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,25 +38,25 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
+                currentFragment = item.getItemId();
                 Fragment fragment = null;
                 // Accounting for all fragments/screens
                 switch (item.getItemId()) {
                     case R.id.menuBrainstorm:
-                        fragment = new BrainstormFragment();
+                        mFragment = new BrainstormFragment();
                         break;
                     case R.id.menuGlobal:
-                        fragment = new GlobalFeedFragment();
+                        mFragment = new GlobalFeedFragment();
                         break;
                     case R.id.menuIdeas:
-                        fragment = new PrivateFeedFragment();
+                        mFragment = new PrivateFeedFragment();
                         break;
                     case R.id.menuProfile:
-                        fragment = new ProfileFragment();
+                        mFragment = new ProfileFragment();
                         break;
                 }
                 mFragmentManager.beginTransaction()
-                                .replace(R.id.flContainer, fragment)
+                                .replace(R.id.flContainer, mFragment)
                                 .commit();
                 return true;
             }
@@ -94,5 +98,22 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayUseLogoEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null && requestCode == 1231) {
+            Idea idea = (Idea) data.getParcelableExtra("idea");
+            int position = data.getIntExtra("position", 0);
+
+            if (currentFragment == R.id.menuIdeas) {
+                PrivateFeedFragment privateFeed = (PrivateFeedFragment) mFragment;
+                privateFeed.updateVisuals(idea, position);
+            } else if (currentFragment == R.id.menuGlobal) {
+                GlobalFeedFragment globalFeed = (GlobalFeedFragment) mFragment;
+                globalFeed.updateVisuals(idea, position);
+            }
+        }
     }
 }

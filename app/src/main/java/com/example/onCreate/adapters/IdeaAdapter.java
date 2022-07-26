@@ -118,7 +118,8 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         // Set the data for each of the views in the UI
         public void bind(Idea idea) {
             mTvDescription.setText(idea.getDescription());
-            mTvTitle.setText(idea.getTitle()); mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
+            mTvTitle.setText(idea.getTitle());
+            mTvTime.setText(idea.calculateTimeAgo(idea.getCreatedAt()));
 
             setIdeaVisuals(idea);
 
@@ -144,22 +145,22 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mIvPostImage.setVisibility(View.GONE);
             }
 
-            for (int i = 0; i<3; i++) {
-                TextView tv = new TextView(mContext);
-                tv.setText("testing");
-                Drawable background = mContext.getResources().getDrawable(R.drawable.layout_tag_background);
-                tv.setBackground(background);
-                tv.setPadding(20, 10, 20, 10);
-                tv.setTextSize(16);
-                tv.setTextColor(Color.WHITE);
-                Typeface typeface = ResourcesCompat.getFont(mContext,R.font.lato_bold);
-                tv.setTypeface(typeface);
-
-                Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.setMargins(20, 0, 0, 0);
-                tv.setLayoutParams(params);
-                mTagLayout.addView(tv);
-            }
+//            for (int i = 0; i<3; i++) {
+//                TextView tv = new TextView(mContext);
+//                tv.setText("testing");
+//                Drawable background = mContext.getResources().getDrawable(R.drawable.layout_tag_background);
+//                tv.setBackground(background);
+//                tv.setPadding(20, 10, 20, 10);
+//                tv.setTextSize(16);
+//                tv.setTextColor(Color.WHITE);
+//                Typeface typeface = ResourcesCompat.getFont(mContext,R.font.lato_bold);
+//                tv.setTypeface(typeface);
+//
+//                Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                params.setMargins(20, 0, 0, 0);
+//                tv.setLayoutParams(params);
+//                mTagLayout.addView(tv);
+//            }
 //            mShareLayout.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
@@ -217,7 +218,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 } else {
                     mIvTrash.setVisibility(View.GONE);
                 }
-
 
                 // Set functionality for global feed
                 ArrayList<ParseUser> upvoteUsers = idea.getUpvoteUsers();

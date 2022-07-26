@@ -305,6 +305,12 @@ public class PrivateFeedFragment extends Fragment {
         }
     }
 
+    // Update visuals for ann idea
+    public void updateVisuals(Idea idea, int position) {
+        mIdeas.set(position, idea);
+        mAdapter.notifyItemChanged(position);
+    }
+
 
     // Clear the SearchView upon refresh
     private void clearSearch() {

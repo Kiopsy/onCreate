@@ -48,6 +48,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     private ConstraintLayout mGlobalFeedButtonLayout;
     private ConstraintLayout mLayout;
     private Idea mIdea;
+    private int mPosition;
     private final int REQUEST_DETAILS_ACTIVITY = 1231;
 
     @Override
@@ -56,9 +57,11 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_idea_details);
 
         mIdea = (Idea) getIntent().getParcelableExtra("idea");
+        mPosition = getIntent().getIntExtra("position", 0);
 
         Intent intent = new Intent();
         intent.putExtra("idea", mIdea);
+        intent.putExtra("position", mPosition);
         setResult(REQUEST_DETAILS_ACTIVITY, intent);
 
         mTvDescription = findViewById(R.id.tvDescription);
@@ -190,10 +193,6 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_to_left, R.anim.exit_to_left);
-        Intent data = new Intent();
-        data.putExtra("idea", mIdea);
-        setResult(Activity.RESULT_OK, data);
-        finish();
     }
 
     public void setActionBarIcon() {
