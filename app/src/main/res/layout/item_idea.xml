@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:id="@+id/cardViewKarma"-->
-
-<!--    android:layout_width="100dp"-->
-<!--    android:layout_height="150dp"-->
-<!--    android:layout_marginStart="50dp"-->
-<!--    app:cardCornerRadius="20dp">-->
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -137,12 +127,14 @@
         android:id="@+id/ivTrash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:baselineAlignBottom="true"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/shareLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/shareLayout"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
         app:srcCompat="@drawable/ic_trashcan" />
 
     <ImageView
@@ -169,42 +161,56 @@
         tools:layout_editor_absoluteX="1dp" />
 
     <LinearLayout
-        android:id="@+id/shareLayout"
+        android:id="@+id/tagLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/rounded_corners_gray"
-        android:clickable="true"
         android:orientation="horizontal"
-        android:elevation="2dp"
-        android:padding="5dp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ivTrash"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:layout_constraintVertical_bias="0.0">
-
-        <ImageView
-            android:id="@+id/ivShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="2dp"
-            app:srcCompat="@drawable/ic_share"
-            app:tint="@drawable/share_icon_selector" />
-
-        <TextView
-            android:id="@+id/tvShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="2dp"
-            android:fontFamily="@font/lato_black"
-            android:text="Share"
-            android:textColor="@color/gray_theme"
-            android:textStyle="bold" />
+        app:layout_constraintTop_toBottomOf="@+id/divider">
 
     </LinearLayout>
+
+    <!--    <LinearLayout-->
+<!--        android:id="@+id/shareLayout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginBottom="10dp"-->
+<!--        android:background="@drawable/rounded_corners_gray"-->
+<!--        android:clickable="true"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:elevation="2dp"-->
+<!--        android:padding="5dp"-->
+<!--        android:visibility="visible"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/ivTrash"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/divider"-->
+<!--        app:layout_constraintVertical_bias="0.0">-->
+
+<!--        <ImageView-->
+<!--            android:id="@+id/ivShare"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_marginStart="2dp"-->
+<!--            app:srcCompat="@drawable/ic_share"-->
+<!--            app:tint="@drawable/share_icon_selector" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tvShare"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_margin="2dp"-->
+<!--            android:fontFamily="@font/lato_black"-->
+<!--            android:text="Share"-->
+<!--            android:textColor="@color/gray_theme"-->
+<!--            android:textStyle="bold" />-->
+
+<!--    </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>

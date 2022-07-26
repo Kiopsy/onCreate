@@ -16,6 +16,7 @@
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
         <entry key="app/src/main/res/drawable/layout_image_circle.xml" value="0.5885" />
         <entry key="app/src/main/res/drawable/layout_rounded_corners.xml" value="0.643" />
+        <entry key="app/src/main/res/drawable/layout_tag_background.xml" value="0.596" />
         <entry key="app/src/main/res/drawable/logo.xml" value="0.7685" />
         <entry key="app/src/main/res/drawable/rounded_corners_gray.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/share_icon.xml" value="0.643" />
@@ -38,6 +39,7 @@
         <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_idea.xml" value="0.5351170568561873" />
         <entry key="app/src/main/res/layout/item_private_idea.xml" value="0.4288247213779129" />
+        <entry key="app/src/main/res/layout/item_tag.xml" value="0.709375" />
         <entry key="app/src/main/res/menu/menu_bottom_nav.xml" value="0.203125" />
         <entry key="app/src/main/res/menu/menu_bottom_navigation.xml" value="0.1" />
         <entry key="app/src/main/res/menu/menu_canvas.xml" value="0.7479166666666667" />
@@ -57,7 +59,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.6815551757812501" />
+        <option name="scale" value="0.5351170568561873" />
       </ProjectState>
     </option>
   </component>

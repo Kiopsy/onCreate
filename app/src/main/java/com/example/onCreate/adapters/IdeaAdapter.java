@@ -5,6 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Constraints;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -88,6 +93,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         private ConstraintLayout mGlobalFeedButtonLayout;
         private LinearLayout mShareLayout;
         private PostShareDialog mShareDialog;
+        private LinearLayout mTagLayout;
 
         // Put all Views in a ViewHolder
         public ViewHolder(@NonNull View itemView) {
@@ -104,7 +110,8 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mIvDownvote = itemView.findViewById(R.id.ivDownvotes);
             mPrivateFeedButtonLayout = itemView.findViewById(R.id.privateFeedButtonLayout);
             mGlobalFeedButtonLayout = itemView.findViewById(R.id.globalFeedButtonLayout);
-            mShareLayout = itemView.findViewById(R.id.shareLayout);
+            // mShareLayout = itemView.findViewById(R.id.shareLayout);
+            mTagLayout = itemView.findViewById(R.id.tagLayout);
             itemView.setOnClickListener(this);
         }
 
@@ -137,13 +144,29 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mIvPostImage.setVisibility(View.GONE);
             }
 
-            mShareLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mShareDialog = new PostShareDialog();
-                    mShareDialog.showDialog(mContext);
-                }
-            });
+            for (int i = 0; i<3; i++) {
+                TextView tv = new TextView(mContext);
+                tv.setText("testing");
+                Drawable background = mContext.getResources().getDrawable(R.drawable.layout_tag_background);
+                tv.setBackground(background);
+                tv.setPadding(20, 10, 20, 10);
+                tv.setTextSize(16);
+                tv.setTextColor(Color.WHITE);
+                Typeface typeface = ResourcesCompat.getFont(mContext,R.font.lato_bold);
+                tv.setTypeface(typeface);
+
+                Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(20, 0, 0, 0);
+                tv.setLayoutParams(params);
+                mTagLayout.addView(tv);
+            }
+//            mShareLayout.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    mShareDialog = new PostShareDialog();
+//                    mShareDialog.showDialog(mContext);
+//                }
+//            });
         }
 
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea
@@ -164,6 +187,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 // show the activity
                 Activity activity = (Activity) mContext;
 
+                // start the activity and set transitions
                 activity.startActivityForResult(intent, REQUEST_DETAIL_ACTIVITY);
                 activity.overridePendingTransition(R.anim.slide_to_right, R.anim.exit_to_right);
             }

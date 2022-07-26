@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -189,7 +190,9 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_to_left, R.anim.exit_to_left);
-        setResult(REQUEST_DETAILS_ACTIVITY);
+        Intent data = new Intent();
+        data.putExtra("idea", mIdea);
+        setResult(Activity.RESULT_OK, data);
         finish();
     }
 
