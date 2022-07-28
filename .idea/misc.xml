@@ -23,6 +23,9 @@
         <entry key="app/src/main/res/drawable/rounded_corners_gray.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/rounded_dialog.xml" value="0.162" />
         <entry key="app/src/main/res/drawable/share_icon.xml" value="0.643" />
+        <entry key="app/src/main/res/font/lato.xml" value="0.5708333333333333" />
+        <entry key="app/src/main/res/font/lato_black.xml" value="0.5708333333333333" />
+        <entry key="app/src/main/res/font/lato_bold.xml" value="0.5708333333333333" />
         <entry key="app/src/main/res/layout/activity_canvas.xml" value="0.28020833333333334" />
         <entry key="app/src/main/res/layout/activity_idea_details.xml" value="0.4575892857142857" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.5" />

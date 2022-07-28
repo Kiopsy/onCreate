@@ -43,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 // Accounting for all fragments/screens
                 switch (item.getItemId()) {
-                    case R.id.menuBrainstorm:
-                        mFragment = new BrainstormFragment();
-                        break;
                     case R.id.menuGlobal:
                         mFragment = new GlobalFeedFragment();
                         break;

@@ -188,11 +188,14 @@ public class IdeaService {
         for (Idea idea : mRecentQuery) {
             char[] description = idea.getDescription().toCharArray();
             char[] title = idea.getTitle().toCharArray();
+            char[] tags = stringListToCharArray(idea.getTags());
 
             // Add idea to list if pattern is contained within title/description
             int descriptionIndex = boyerMooreSearch(pat, description);
             int titleIndex = boyerMooreSearch(pat, title);
-            if (descriptionIndex != -1 || titleIndex != -1) {
+            int tagIndex = boyerMooreSearch(pat, tags);
+
+            if (descriptionIndex != -1 || titleIndex != -1 || tagIndex != -1) {
                 relevantIdeas.add(idea);
             }
         }
@@ -206,15 +209,21 @@ public class IdeaService {
         List<StringSuggestion> relevantStrings = new ArrayList<>();
         HashSet<String> relevantHash = new HashSet<>();
 
+        if (pattern.equals("")) {
+            return relevantStrings;
+        }
+
         // Using the Boyer-Moore Fast String Searching Algorithm
         char[] pat = pattern.toCharArray();
         for (Idea idea : mRecentQuery) {
             char[] description = idea.getDescription().toCharArray();
             char[] title = idea.getTitle().toCharArray();
+            char[] tags = stringListToCharArray(idea.getTags());
 
             // Add idea to list if pattern is contained within title/description
             int descriptionIndex = boyerMooreSearch(pat, description);
             int titleIndex = boyerMooreSearch(pat, title);
+            int tagIndex = boyerMooreSearch(pat, tags);
 
             if (descriptionIndex != -1) {
                 String atIndex = StringAtIndex(description, descriptionIndex);
@@ -224,6 +233,12 @@ public class IdeaService {
             }
             if (titleIndex != -1) {
                 String atIndex = StringAtIndex(title, titleIndex);
+                if (relevantHash.size() < 7) {
+                    relevantHash.add(atIndex);
+                }
+            }
+            if (tagIndex != -1) {
+                String atIndex = StringAtIndex(tags, tagIndex);
                 if (relevantHash.size() < 7) {
                     relevantHash.add(atIndex);
                 }
@@ -302,9 +317,12 @@ public class IdeaService {
         int l = index;
         int r = index;
 
-        while (l != 0) {
+        while (l >= 0) {
             if (!Character.isAlphabetic(text[l])) {
                 l++;
+                break;
+            } else if (l == 0) {
+                // edge case, nonAlphabetic char is the at endpoints
                 break;
             }
             l--;
@@ -321,5 +339,15 @@ public class IdeaService {
             text[i] = Character.toLowerCase(text[i]);
         }
         return new String(Arrays.copyOfRange(text, l, r + 1));
+    }
+
+    private char[] stringListToCharArray(ArrayList<String> tags) {
+        String totalWords = "";
+
+        for (int i = 0; i < tags.size(); i++) {
+            totalWords += tags.get(i) + "";
+        }
+
+        return totalWords.toCharArray();
     }
 }

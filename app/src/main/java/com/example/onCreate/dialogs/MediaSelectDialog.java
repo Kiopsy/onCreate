@@ -40,7 +40,7 @@ public class MediaSelectDialog extends DialogFragment {
         mDialog.show();
         mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimations;
         mDialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 

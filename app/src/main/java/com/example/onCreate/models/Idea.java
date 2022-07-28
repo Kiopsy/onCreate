@@ -24,6 +24,8 @@ public class Idea extends ParseObject {
     public static final String KEY_VISIBILITY = "isPrivate";
     public static final String KEY_ARRAY_UPVOTE = "upvoteUsers";
     public static final String KEY_ARRAY_DOWNVOTE = "downvoteUsers";
+    public static final String KEY_NET_VOTES = "netVotes";
+    public static final String KEY_ARRAY_TAGS = "tags";
 
     public String getDescription() {
         return getString(KEY_DESCRIPTION);
@@ -88,6 +90,14 @@ public class Idea extends ParseObject {
     public ArrayList<ParseUser> getDownvoteUsers() { return (ArrayList) get(KEY_ARRAY_DOWNVOTE); }
 
     public void setDownvoteUsers(ArrayList<ParseUser> users) { put(KEY_ARRAY_DOWNVOTE, users); }
+
+    public int getNetVotes() { return getInt(KEY_NET_VOTES); }
+
+    public void setNetVotes(int netVotes) { put(KEY_NET_VOTES, netVotes); }
+
+    public ArrayList<String> getTags() { return (ArrayList<String>) get(KEY_ARRAY_TAGS); }
+
+    public void setTags(ArrayList<String> tags) { put(KEY_ARRAY_TAGS, tags); }
 
     public static String calculateTimeAgo(Date createdAt) {
 

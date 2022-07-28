@@ -27,6 +27,7 @@ import com.example.onCreate.R;
 import com.example.onCreate.dialogs.MediaSelectDialog;
 import com.example.onCreate.dialogs.TagDialog;
 import com.example.onCreate.models.Idea;
+import com.example.onCreate.utilities.CustomEditText;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -34,6 +35,7 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class BrainstormActivity extends AppCompatActivity {
 
@@ -62,8 +64,8 @@ public class BrainstormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_brainstorm_new);
 
-        mEtTitle = findViewById(R.id.etTitle);
-        mEtDescription = findViewById(R.id.etDescription);
+        mEtTitle = findViewById(R.id.title);
+        mEtDescription = findViewById(R.id.description);
         mBtnSubmit = findViewById(R.id.btnSubmit);
         mMediaLayout = findViewById(R.id.mediaLayout);
         mTagButtonLayout = findViewById(R.id.tagLayout);
@@ -119,15 +121,19 @@ public class BrainstormActivity extends AppCompatActivity {
                 }
 
                 // Differentiating between private and global posts using Radio group/buttons
-                int index = mSwitchPrivateGlobal.indexOfChild(findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
+//                int index = mSwitchPrivateGlobal.indexOfChild(findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
 
                 // Feed selection: index == 0 -> private ; index == 1 -> global
-                boolean isPrivate = index == 0 ? true : false;
+                //boolean isPrivate = index == 0 ? true : false;
 
+                boolean isPrivate = true;
                 ParseUser currentUser = ParseUser.getCurrentUser();
 
+                // Get the string tags
+                ArrayList<String> tags = mTagDialog == null ? new ArrayList<>() : mTagDialog.getTags();
+
                 // Publishes input data to database
-                savePost(description, title, currentUser, mSelectedImage, isPrivate);
+                savePost(description, title, currentUser, mSelectedImage, isPrivate, tags);
                 // Goes to home screen after submission
                 goMainActivity();
             }
@@ -151,13 +157,14 @@ public class BrainstormActivity extends AppCompatActivity {
     }
 
     // Function to create and update an idea model, and post to Parse
-    private void savePost(String description, String title, ParseUser currentUser, Bitmap photoFile, boolean isPrivate) {
+    private void savePost(String description, String title, ParseUser currentUser, Bitmap photoFile, boolean isPrivate, ArrayList<String> tags) {
         Idea idea = new Idea();
         idea.setDescription(description);
         idea.setUser(currentUser);
         idea.setVisibility(true);
         idea.setTitle(title);
         idea.setVisibility(isPrivate);
+        idea.setTags(tags);
 
         // Setting starting upvotes if global
         if (!isPrivate) {

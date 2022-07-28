@@ -6,6 +6,7 @@ import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_TOP;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -27,12 +28,14 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
+import com.example.onCreate.activities.BrainstormActivity;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.models.StringSuggestion;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.example.onCreate.utilities.IdeaService;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.parse.FindCallback;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -59,6 +62,7 @@ public class GlobalFeedFragment extends Fragment {
     protected List<Idea> mIdeas;
     private IdeaService mIdeaService;
     private FloatingSearchView mSearchView;
+    private ExtendedFloatingActionButton mFloatingActionBtn;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
     private AtomicBoolean mClear = new AtomicBoolean();
 
@@ -176,6 +180,18 @@ public class GlobalFeedFragment extends Fragment {
                 mClear.set(true);
                 search(currentQuery);
                 mSearchView.clearSearchFocus();
+            }
+        });
+
+        mFloatingActionBtn = view.findViewById(R.id.fab);
+
+        mFloatingActionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), BrainstormActivity.class);
+                // start the activity and set transitions
+                getActivity().startActivity(i);
+                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
             }
         });
     }

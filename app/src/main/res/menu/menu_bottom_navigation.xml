@@ -8,11 +8,11 @@
         android:icon="@drawable/ic_profile"
         android:title="Profile"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/menuBrainstorm"
-        android:icon="@drawable/ic_brainstorm"
-        android:title="Brainstorm"
-        app:showAsAction="always" />
+<!--    <item-->
+<!--        android:id="@+id/menuBrainstorm"-->
+<!--        android:icon="@drawable/ic_brainstorm"-->
+<!--        android:title="Brainstorm"-->
+<!--        app:showAsAction="always" />-->
     <item
         android:id="@+id/menuIdeas"
         android:icon="@drawable/ic_home"

@@ -129,7 +129,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
             mIvTrash.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog diaBox = AskOption(idea);
+                    AlertDialog diaBox = AskOption(idea, mTagLayout);
                     diaBox.show();
                 }
             });
@@ -143,22 +143,24 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                 mIvPostImage.setVisibility(View.GONE);
             }
 
-//            for (int i = 0; i<3; i++) {
-//                TextView tv = new TextView(mContext);
-//                tv.setText("testing");
-//                Drawable background = mContext.getResources().getDrawable(R.drawable.layout_tag_background);
-//                tv.setBackground(background);
-//                tv.setPadding(20, 10, 20, 10);
-//                tv.setTextSize(16);
-//                tv.setTextColor(Color.WHITE);
-//                Typeface typeface = ResourcesCompat.getFont(mContext,R.font.lato_bold);
-//                tv.setTypeface(typeface);
-//
-//                Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                params.setMargins(20, 0, 0, 0);
-//                tv.setLayoutParams(params);
-//                mTagLayout.addView(tv);
-//            }
+            ArrayList<String> tags = idea.getTags();
+
+            if (tags != null) {
+                mTagLayout.removeAllViews();
+                for (int i = 0; i < tags.size(); i++) {
+                    TextView tv = new TextView(mContext);
+                    tv.setText(tags.get(i));
+                    tv.setTextSize(16);
+                    tv.setTextColor(Color.GRAY);
+                    Typeface typeface = ResourcesCompat.getFont(mContext, R.font.lato_bold_italic);
+                    tv.setTypeface(typeface);
+
+                    Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(0, 0, 20, 0);
+                    tv.setLayoutParams(params);
+                    mTagLayout.addView(tv);
+                }
+            }
         }
 
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea
@@ -225,7 +227,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         }
     }
 
-    private AlertDialog AskOption(Idea idea) {
+    private AlertDialog AskOption(Idea idea, LinearLayout tagLayout) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(mContext)
                 // set message, title, and icon
                 .setTitle("Delete")
@@ -237,6 +239,7 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
                     public void onClick(DialogInterface dialog, int whichButton) {
 
                         mIdeas.remove(idea);
+                        tagLayout.removeAllViews();
                         idea.deleteInBackground(new DeleteCallback() {
                             @Override
                             public void done(ParseException e) {

@@ -75,7 +75,7 @@ public class TagDialog extends DialogFragment {
                         String tag = mEtTags.getText().toString();
 
                         // Add tag to list and LinearLayout
-                        mTags.add(tag);
+                        mTags.add("#" + tag);
                         mTagLayout.addView(createTagTextView(tag, activity));
                     } else {
                         // Create a snackbar
@@ -117,7 +117,7 @@ public class TagDialog extends DialogFragment {
         mDialog.show();
         mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimations;
         mDialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
@@ -134,7 +134,7 @@ public class TagDialog extends DialogFragment {
         TextView tv = new TextView(activity);
 
         // Set text, and attributes
-        tv.setText("#" + tag);
+        tv.setText(tag);
         Drawable background = activity.getResources().getDrawable(R.drawable.layout_tag_background);
         tv.setBackground(background);
         tv.setPadding(35, 25, 35, 25);

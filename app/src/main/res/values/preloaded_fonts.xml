@@ -6,5 +6,6 @@
         <item>@font/lato</item>
         <item>@font/lato_black</item>
         <item>@font/lato_bold</item>
+        <item>@font/lato_bold_italic</item>
     </array>
 </resources>

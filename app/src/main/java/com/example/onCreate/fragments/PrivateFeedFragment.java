@@ -180,6 +180,14 @@ public class PrivateFeedFragment extends Fragment {
             }
         });
 
+        mSearchView.setOnClearSearchActionListener(new FloatingSearchView.OnClearSearchActionListener() {
+            @Override
+            public void onClearSearchClicked() {
+                mClear.set(true);
+                mSearchView.clearSearchFocus();
+            }
+        });
+
         mFloatingActionBtn = view.findViewById(R.id.fab);
 
         mFloatingActionBtn.setOnClickListener(new View.OnClickListener() {
@@ -191,7 +199,6 @@ public class PrivateFeedFragment extends Fragment {
                 getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
             }
         });
-        //mFloatingActionBtn.setImageBitmap(textAsBitmap("New Post", 40, Color.WHITE));
     }
 
     // Function to search for a specific text and to add suggestions in SearchView
@@ -327,7 +334,6 @@ public class PrivateFeedFragment extends Fragment {
         mIdeas.set(position, idea);
         mAdapter.notifyItemChanged(position);
     }
-
 
     // Clear the SearchView upon refresh
     private void clearSearch() {
