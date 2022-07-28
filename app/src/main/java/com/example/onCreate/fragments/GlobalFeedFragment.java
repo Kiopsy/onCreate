@@ -53,7 +53,6 @@ public class GlobalFeedFragment extends Fragment {
     public static final String TAG = "GlobalFeedFragment";
     private EndlessRecyclerViewScrollListener mScrollListener;
     private SwipeRefreshLayout mSwipeContainer;
-    private TextView mTvFilter;
     private FilterDialog mFilterDialog;
     protected RecyclerView mRvPosts;
     protected IdeaAdapter mAdapter;
@@ -411,6 +410,7 @@ public class GlobalFeedFragment extends Fragment {
     public void updateVisuals(Idea idea, int position) {
         mIdeas.set(position, idea);
         mAdapter.notifyItemChanged(position);
+        mRvPosts.smoothScrollToPosition(position);
     }
 
     // Clear the SearchView upon refresh

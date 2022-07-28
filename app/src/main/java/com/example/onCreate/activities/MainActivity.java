@@ -25,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView mBottomNavView;
     private final FragmentManager mFragmentManager = getSupportFragmentManager();
+    private static final int REQUEST_DETAIL_ACTIVITY = 1231;
     private Fragment mFragment = null;
-    private int currentFragment;
+    private int mCurrentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mBottomNavView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                currentFragment = item.getItemId();
+                mCurrentFragment = item.getItemId();
                 Fragment fragment = null;
                 // Accounting for all fragments/screens
                 switch (item.getItemId()) {
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false);
     }
 
+    // Activity result to detect when a post is coming from the IdeaDetailsActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -107,10 +109,11 @@ public class MainActivity extends AppCompatActivity {
             Idea idea = (Idea) data.getParcelableExtra("idea");
             int position = data.getIntExtra("position", 0);
 
-            if (currentFragment == R.id.menuIdeas) {
+            // Updates visuals when current fragment is a feed
+            if (mCurrentFragment == R.id.menuIdeas) {
                 PrivateFeedFragment privateFeed = (PrivateFeedFragment) mFragment;
                 privateFeed.updateVisuals(idea, position);
-            } else if (currentFragment == R.id.menuGlobal) {
+            } else if (mCurrentFragment == R.id.menuGlobal) {
                 GlobalFeedFragment globalFeed = (GlobalFeedFragment) mFragment;
                 globalFeed.updateVisuals(idea, position);
             }

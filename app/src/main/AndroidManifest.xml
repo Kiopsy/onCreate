@@ -46,8 +46,10 @@
             android:exported="false" />
         <activity
             android:name=".activities.MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
+        <activity
+            android:name=".activities.BrainstormActivity"
+            android:exported="false" />
 
         <activity
             android:name=".activities.LoginActivity"

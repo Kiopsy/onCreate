@@ -91,8 +91,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
         private ImageView mIvPostImage;
         private ConstraintLayout mPrivateFeedButtonLayout;
         private ConstraintLayout mGlobalFeedButtonLayout;
-        private LinearLayout mShareLayout;
-        private PostShareDialog mShareDialog;
         private LinearLayout mTagLayout;
 
         // Put all Views in a ViewHolder
@@ -161,13 +159,6 @@ public class IdeaAdapter extends RecyclerView.Adapter<IdeaAdapter.ViewHolder> {
 //                tv.setLayoutParams(params);
 //                mTagLayout.addView(tv);
 //            }
-//            mShareLayout.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    mShareDialog = new PostShareDialog();
-//                    mShareDialog.showDialog(mContext);
-//                }
-//            });
         }
 
         // when the user clicks post, show IdeaDetailsActivity for the selected Idea

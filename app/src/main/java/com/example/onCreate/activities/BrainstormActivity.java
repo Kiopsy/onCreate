@@ -1,31 +1,15 @@
-package com.example.onCreate.fragments;
+package com.example.onCreate.activities;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageDecoder;
-import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,13 +17,16 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.example.onCreate.R;
-import com.example.onCreate.activities.CanvasActivity;
-import com.example.onCreate.activities.MainActivity;
 import com.example.onCreate.dialogs.MediaSelectDialog;
 import com.example.onCreate.dialogs.TagDialog;
 import com.example.onCreate.models.Idea;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -47,10 +34,8 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
-
-public class BrainstormFragment extends Fragment {
+public class BrainstormActivity extends AppCompatActivity {
 
     private EditText mEtTitle;
     private EditText mEtDescription;
@@ -65,42 +50,36 @@ public class BrainstormFragment extends Fragment {
     private MediaSelectDialog mMediaDialog;
     private TagDialog mTagDialog;
     private CardView mImageCard;
+    private ImageView mClose;
     private final static int PICK_PHOTO_CODE = 1046;
     private final static int CANVAS_CODE = 1253;
     private final static int MAX_DESCRIPTION_LENGTH = 280;
     private final static int MAX_TITLE_LENGTH = 35;
     private final static String TAG = "Brainstorming Fragment";
 
-    public BrainstormFragment() {
-        // Required empty constructor
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_brainstorm_new, container, false);
-    }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_brainstorm_new);
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mEtTitle = view.findViewById(R.id.etTitle);
-        mEtDescription = view.findViewById(R.id.etDescription);
-        mBtnSubmit = view.findViewById(R.id.btnSubmit);
-        mMediaLayout = view.findViewById(R.id.mediaLayout);
-        mTagButtonLayout = view.findViewById(R.id.tagLayout);
-        mTagDisplayLayout = view.findViewById(R.id.layoutTagDisplay);
-        mIvPostImage = view.findViewById(R.id.ivPostImage);
-        mSwitchPrivateGlobal = view.findViewById(R.id.switchPrivateGlobal);
-        mScreenLayout = view.findViewById(R.id.ConstraintLayout);
-        mImageCard = view.findViewById(R.id.cardImagePost);
+        mEtTitle = findViewById(R.id.etTitle);
+        mEtDescription = findViewById(R.id.etDescription);
+        mBtnSubmit = findViewById(R.id.btnSubmit);
+        mMediaLayout = findViewById(R.id.mediaLayout);
+        mTagButtonLayout = findViewById(R.id.tagLayout);
+        mTagDisplayLayout = findViewById(R.id.layoutTagDisplay);
+        mIvPostImage = findViewById(R.id.ivPostImage);
+        mSwitchPrivateGlobal = findViewById(R.id.switchPrivateGlobal);
+        mScreenLayout = findViewById(R.id.ConstraintLayout);
+        mImageCard = findViewById(R.id.cardImagePost);
+        mClose = findViewById(R.id.ivClose);
 
         // Button to choose an image from the phone gallery
         mMediaLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mMediaDialog = new MediaSelectDialog(galleryBtnOnClick(), canvasBtnOnClick());
-                mMediaDialog.showDialog(getActivity());
+                mMediaDialog.showDialog(BrainstormActivity.this);
             }
         });
 
@@ -109,7 +88,7 @@ public class BrainstormFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mTagDialog = new TagDialog(mScreenLayout, mTagDisplayLayout);
-                mTagDialog.showDialog(getActivity());
+                mTagDialog.showDialog(BrainstormActivity.this);
             }
         });
 
@@ -120,27 +99,27 @@ public class BrainstormFragment extends Fragment {
                 // Description input and variants
                 String description = mEtDescription.getText().toString();
                 if (description.isEmpty()) {
-                    Toast.makeText(getContext(), "Description cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BrainstormActivity.this, "Description cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (description.length() > MAX_DESCRIPTION_LENGTH) {
-                    Toast.makeText(getContext(), "Sorry, your description is too long", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BrainstormActivity.this, "Sorry, your description is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 // Title input and variants
                 String title = mEtTitle.getText().toString();
                 if (title.isEmpty()) {
-                    Toast.makeText(getContext(), "title cannot be empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BrainstormActivity.this, "title cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if (title.length() > MAX_TITLE_LENGTH) {
-                    Toast.makeText(getContext(), "Sorry, your title is too long", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BrainstormActivity.this, "Sorry, your title is too long", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 // Differentiating between private and global posts using Radio group/buttons
-                int index = mSwitchPrivateGlobal.indexOfChild(view.findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
+                int index = mSwitchPrivateGlobal.indexOfChild(findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
 
                 // Feed selection: index == 0 -> private ; index == 1 -> global
                 boolean isPrivate = index == 0 ? true : false;
@@ -153,6 +132,22 @@ public class BrainstormFragment extends Fragment {
                 goMainActivity();
             }
         });
+
+        // Button to close the post activity
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        setActionBarIcon();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom);
     }
 
     // Function to create and update an idea model, and post to Parse
@@ -181,7 +176,7 @@ public class BrainstormFragment extends Fragment {
             public void done(ParseException e) {
                 if (e != null) {
                     Log.e(TAG, "error while saving", e);
-                    Toast.makeText(getContext(), "error while saving", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BrainstormActivity.this, "error while saving", Toast.LENGTH_SHORT).show();
                 }
                 Log.i(TAG, "Post save was successful");
                 mEtDescription.setText("");
@@ -214,11 +209,11 @@ public class BrainstormFragment extends Fragment {
             // check version of Android on device
             if(Build.VERSION.SDK_INT > 27){
                 // on newer versions of Android, use the new decodeBitmap method
-                ImageDecoder.Source source = ImageDecoder.createSource(getActivity().getContentResolver(), photoUri);
+                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), photoUri);
                 image = ImageDecoder.decodeBitmap(source);
             } else {
                 // support older versions of Android by using getBitmap
-                image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), photoUri);
+                image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -279,14 +274,23 @@ public class BrainstormFragment extends Fragment {
 
     // Intent to go to the homepage
     private void goMainActivity() {
-        Intent i = new Intent(getContext(), MainActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
-        getActivity().finish();
+        finish();
     }
 
     // Intent to go canvas drawing
     private void goCanvasActivity() {
-        Intent i = new Intent(getContext(), CanvasActivity.class);
+        Intent i = new Intent(this, CanvasActivity.class);
         startActivityForResult(i, CANVAS_CODE);
+    }
+
+    // Action bar for the screen that shows onCreate logo
+    private void setActionBarIcon() {
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setIcon(R.drawable.logo);
+        actionBar.setDisplayUseLogoEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
     }
 }

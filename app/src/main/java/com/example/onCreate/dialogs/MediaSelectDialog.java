@@ -2,7 +2,11 @@ package com.example.onCreate.dialogs;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
@@ -34,6 +38,10 @@ public class MediaSelectDialog extends DialogFragment {
         btnCanvas.setOnClickListener(mCanvasOnClick);
 
         mDialog.show();
+        mDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+        mDialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
     public void hideDialog() {

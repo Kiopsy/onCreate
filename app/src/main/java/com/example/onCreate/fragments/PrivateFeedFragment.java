@@ -6,14 +6,12 @@ import static com.example.onCreate.utilities.IdeaService.REQUEST_RECENTS;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_SEARCH;
 import static com.example.onCreate.utilities.IdeaService.REQUEST_STARRED;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,25 +23,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.example.onCreate.R;
-import com.example.onCreate.activities.IdeaDetailsActivity;
+import com.example.onCreate.activities.BrainstormActivity;
 import com.example.onCreate.adapters.IdeaAdapter;
 import com.example.onCreate.dialogs.FilterDialog;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.models.StringSuggestion;
-import com.example.onCreate.utilities.AutoCompleteClient;
 import com.example.onCreate.utilities.EndlessRecyclerViewScrollListener;
 import com.example.onCreate.utilities.IdeaService;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +50,6 @@ import okhttp3.Headers;
 public class PrivateFeedFragment extends Fragment {
 
     private static final String TAG = "PrivateFeedFragment";
-    private static final int REQUEST_DETAIL_ACTIVITY = 1231;
     private EndlessRecyclerViewScrollListener mScrollListener;
     private SwipeRefreshLayout mSwipeContainer;
     private RecyclerView mRvPosts;
@@ -63,6 +58,7 @@ public class PrivateFeedFragment extends Fragment {
     private IdeaService mIdeaService;
     private FloatingSearchView mSearchView;
     private FilterDialog mFilterDialog;
+    private ExtendedFloatingActionButton mFloatingActionBtn;
     private int mCurrentFilterRequest = REQUEST_RECENTS;
     private AtomicBoolean mClear = new AtomicBoolean();
 
@@ -183,6 +179,19 @@ public class PrivateFeedFragment extends Fragment {
                 mSearchView.clearSearchFocus();
             }
         });
+
+        mFloatingActionBtn = view.findViewById(R.id.fab);
+
+        mFloatingActionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), BrainstormActivity.class);
+                // start the activity and set transitions
+                getActivity().startActivity(i);
+                getActivity().overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top);
+            }
+        });
+        //mFloatingActionBtn.setImageBitmap(textAsBitmap("New Post", 40, Color.WHITE));
     }
 
     // Function to search for a specific text and to add suggestions in SearchView
@@ -297,12 +306,20 @@ public class PrivateFeedFragment extends Fragment {
         return listener;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == REQUEST_DETAIL_ACTIVITY) {
-            mAdapter.notifyDataSetChanged();
-        }
+    // method to convert text to a bitmap for FloatingActionButton
+    public static Bitmap textAsBitmap(String text, float textSize, int textColor) {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(textSize);
+        paint.setColor(textColor);
+        paint.setTextAlign(Paint.Align.LEFT);
+        float baseline = -paint.ascent(); // ascent() is negative
+        int width = (int) (paint.measureText(text) + 0.0f); // round
+        int height = (int) (baseline + paint.descent() + 0.0f);
+        Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(image);
+        canvas.drawText(text, 0, baseline, paint);
+        return image;
     }
 
     // Update visuals for ann idea

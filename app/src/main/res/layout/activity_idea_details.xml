@@ -180,7 +180,7 @@
                 app:tint="@drawable/share_icon_selector" />
 
             <TextView
-                android:id="@+id/tvShare"
+                android:id="@+id/tvTags"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

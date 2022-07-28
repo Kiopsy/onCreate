@@ -11,6 +11,8 @@
         <entry key="app/src/main/res/drawable/bottom_nav_selector.xml" value="0.7115" />
         <entry key="app/src/main/res/drawable/color_switch_background_border.xml" value="0.643" />
         <entry key="app/src/main/res/drawable/control_switch_background_selector.xml" value="0.671" />
+        <entry key="app/src/main/res/drawable/control_switch_background_selector_middle.xml" value="0.5335" />
+        <entry key="app/src/main/res/drawable/control_switch_color_selector.xml" value="0.5335" />
         <entry key="app/src/main/res/drawable/ic_instagram.xml" value="0.435" />
         <entry key="app/src/main/res/drawable/icon_post_selectors.xml" value="0.6405" />
         <entry key="app/src/main/res/drawable/layout_bg.xml" value="0.252203369140625" />
@@ -19,6 +21,7 @@
         <entry key="app/src/main/res/drawable/layout_tag_background.xml" value="0.596" />
         <entry key="app/src/main/res/drawable/logo.xml" value="0.7685" />
         <entry key="app/src/main/res/drawable/rounded_corners_gray.xml" value="0.643" />
+        <entry key="app/src/main/res/drawable/rounded_dialog.xml" value="0.162" />
         <entry key="app/src/main/res/drawable/share_icon.xml" value="0.643" />
         <entry key="app/src/main/res/layout/activity_canvas.xml" value="0.28020833333333334" />
         <entry key="app/src/main/res/layout/activity_idea_details.xml" value="0.4575892857142857" />
@@ -28,10 +31,12 @@
         <entry key="app/src/main/res/layout/activity_private_idea_feed.xml" value="0.9369791666666667" />
         <entry key="app/src/main/res/layout/activity_register.xml" value="0.32741116751269034" />
         <entry key="app/src/main/res/layout/dialog_filter.xml" value="0.736331569664903" />
-        <entry key="app/src/main/res/layout/dialog_media_select.xml" value="0.18764953613281252" />
+        <entry key="app/src/main/res/layout/dialog_media_select.xml" value="0.1293228149414063" />
         <entry key="app/src/main/res/layout/dialog_share.xml" value="0.6621376811594203" />
         <entry key="app/src/main/res/layout/dialog_stroke_selector.xml" value="0.4453507340946166" />
-        <entry key="app/src/main/res/layout/fragment_brainstorm.xml" value="0.6626506024096386" />
+        <entry key="app/src/main/res/layout/dialog_tags.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_brainstorm.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_brainstorm_new.xml" value="0.22157135009765627" />
         <entry key="app/src/main/res/layout/fragment_dialog_stroke_selector.xml" value="0.7479166666666667" />
         <entry key="app/src/main/res/layout/fragment_feed.xml" value="0.308584686774942" />
         <entry key="app/src/main/res/layout/fragment_global_feed.xml" value="0.203125" />
