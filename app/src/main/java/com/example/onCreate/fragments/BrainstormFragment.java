@@ -108,7 +108,7 @@ public class BrainstormFragment extends Fragment {
         mTagButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTagDialog = new TagDialog(mScreenLayout, mTagDisplayLayout);
+                mTagDialog = new TagDialog(mTagDisplayLayout);
                 mTagDialog.showDialog(getActivity());
             }
         });

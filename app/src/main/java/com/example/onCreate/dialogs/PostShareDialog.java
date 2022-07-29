@@ -82,6 +82,8 @@ public class PostShareDialog extends DialogFragment {
         PixelCopy.request(activity.getWindow(), rect, bitmap, copyResult -> {
             if (copyResult == PixelCopy.SUCCESS) {
                 Log.i(TAG, "PixelCopy Success");
+            } else {
+                Log.e(TAG, "PixelCopy Failure");
             }
         }, new Handler(Looper.getMainLooper()));
 

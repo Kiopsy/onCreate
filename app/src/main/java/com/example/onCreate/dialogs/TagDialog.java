@@ -31,7 +31,6 @@ public class TagDialog extends DialogFragment {
 
     private EditText mEtTags;
     private LinearLayout mTagLayout;
-    private ConstraintLayout mScreenLayout;
     private LinearLayout mTagDisplayLayout;
     private TextView mTvDone;
     private Dialog mDialog;
@@ -39,8 +38,7 @@ public class TagDialog extends DialogFragment {
     private final String TAG = "TagDialog";
     private final int MAX_TAGS = 3;
 
-    public TagDialog(ConstraintLayout screenLayout, LinearLayout tagDisplayLayout) {
-        mScreenLayout = screenLayout;
+    public TagDialog(LinearLayout tagDisplayLayout) {
         mTagDisplayLayout = tagDisplayLayout;
     }
 
@@ -76,7 +74,7 @@ public class TagDialog extends DialogFragment {
 
                         // Add tag to list and LinearLayout
                         mTags.add("#" + tag);
-                        mTagLayout.addView(createTagTextView(tag, activity));
+                        mTagLayout.addView(createTagTextView("#" + tag, activity));
                     } else {
                         // Create a snackbar
                         Snackbar snackbar = Snackbar.make(mDialog.findViewById(R.id.layout),
@@ -102,6 +100,8 @@ public class TagDialog extends DialogFragment {
             public void onClick(View v) {
                 // Send tags over for saving
                 Log.i(TAG, "done button pressed");
+
+                mTagDisplayLayout.removeAllViews();
 
                 // populate the LinLayout of the brainstorming screen with each tag
                 for (int i = 0; i < mTags.size(); i++) {
@@ -137,7 +137,7 @@ public class TagDialog extends DialogFragment {
         tv.setText(tag);
         Drawable background = activity.getResources().getDrawable(R.drawable.layout_tag_background);
         tv.setBackground(background);
-        tv.setPadding(35, 25, 35, 25);
+        tv.setPadding(35, 20, 35, 20);
         tv.setTextSize(16);
         tv.setTextColor(Color.WHITE);
         Typeface typeface = ResourcesCompat.getFont(activity,R.font.lato_bold);

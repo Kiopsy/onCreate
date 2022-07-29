@@ -28,6 +28,7 @@ import com.example.onCreate.dialogs.MediaSelectDialog;
 import com.example.onCreate.dialogs.TagDialog;
 import com.example.onCreate.models.Idea;
 import com.example.onCreate.utilities.CustomEditText;
+import com.github.angads25.toggle.widget.LabeledSwitch;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -47,7 +48,7 @@ public class BrainstormActivity extends AppCompatActivity {
     private LinearLayout mTagButtonLayout;
     private LinearLayout mTagDisplayLayout;
     private ImageView mIvPostImage;
-    private RadioGroup mSwitchPrivateGlobal;
+    private LabeledSwitch mSwitchPrivateGlobal;
     private Bitmap mSelectedImage;
     private MediaSelectDialog mMediaDialog;
     private TagDialog mTagDialog;
@@ -71,7 +72,7 @@ public class BrainstormActivity extends AppCompatActivity {
         mTagButtonLayout = findViewById(R.id.tagLayout);
         mTagDisplayLayout = findViewById(R.id.layoutTagDisplay);
         mIvPostImage = findViewById(R.id.ivPostImage);
-        mSwitchPrivateGlobal = findViewById(R.id.switchPrivateGlobal);
+        mSwitchPrivateGlobal = findViewById(R.id.visibilitySwitch);
         mScreenLayout = findViewById(R.id.ConstraintLayout);
         mImageCard = findViewById(R.id.cardImagePost);
         mClose = findViewById(R.id.ivClose);
@@ -89,7 +90,7 @@ public class BrainstormActivity extends AppCompatActivity {
         mTagButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTagDialog = new TagDialog(mScreenLayout, mTagDisplayLayout);
+                mTagDialog = new TagDialog(mTagDisplayLayout);
                 mTagDialog.showDialog(BrainstormActivity.this);
             }
         });
@@ -120,13 +121,9 @@ public class BrainstormActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Differentiating between private and global posts using Radio group/buttons
-//                int index = mSwitchPrivateGlobal.indexOfChild(findViewById(mSwitchPrivateGlobal.getCheckedRadioButtonId()));
+                // Differentiating between private and global posts using switches
+                boolean isPrivate = mSwitchPrivateGlobal.isOn();
 
-                // Feed selection: index == 0 -> private ; index == 1 -> global
-                //boolean isPrivate = index == 0 ? true : false;
-
-                boolean isPrivate = true;
                 ParseUser currentUser = ParseUser.getCurrentUser();
 
                 // Get the string tags
@@ -295,9 +292,6 @@ public class BrainstormActivity extends AppCompatActivity {
     // Action bar for the screen that shows onCreate logo
     private void setActionBarIcon() {
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.logo);
-        actionBar.setDisplayUseLogoEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.hide();
     }
 }

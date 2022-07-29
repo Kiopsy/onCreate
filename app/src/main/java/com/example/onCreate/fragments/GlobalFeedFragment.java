@@ -144,11 +144,11 @@ public class GlobalFeedFragment extends Fragment {
             public void onActionMenuItemSelected(MenuItem item) {
                 if (item.getItemId() == R.id.filterBtn) {
                     // Creating a dialog
-                    mFilterDialog = new FilterDialog(true);
+                    mFilterDialog = new FilterDialog(false);
 
                     // Setting dialog onClick listeners
                     mFilterDialog.setRecentOnClick(RecentOnClickListener());
-                    mFilterDialog.setStarredOnClick(TopOnClickListener());
+                    mFilterDialog.setTopOnClick(TopOnClickListener());
                     mFilterDialog.setOldestOnClick(OldestOnClickListener());
 
                     // Making the dialog visible
@@ -341,6 +341,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRvPosts.scrollToPosition(0);
                 mIdeaService.queryPosts(null, REQUEST_TOP, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_TOP;
@@ -355,6 +356,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRvPosts.scrollToPosition(0);
                 mIdeaService.queryPosts(null, REQUEST_RECENTS, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_RECENTS;
@@ -369,6 +371,7 @@ public class GlobalFeedFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRvPosts.scrollToPosition(0);
                 mIdeaService.queryPosts(null, REQUEST_OLDEST, true);
                 mFilterDialog.hideDialog();
                 mCurrentFilterRequest = REQUEST_OLDEST;

@@ -9,15 +9,20 @@ import static com.example.onCreate.fragments.PrivateFeedFragment.starOnClickList
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Constraints;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,6 +52,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
     private ConstraintLayout mPrivateFeedButtonLayout;
     private ConstraintLayout mGlobalFeedButtonLayout;
     private ConstraintLayout mLayout;
+    private LinearLayout mTagLayout;
     private Idea mIdea;
     private int mPosition;
     private final int REQUEST_DETAILS_ACTIVITY = 1231;
@@ -79,6 +85,7 @@ public class IdeaDetailsActivity extends AppCompatActivity {
         mTvTime.setText(mIdea.calculateTimeAgo(mIdea.getCreatedAt()));
         mShareLayout = findViewById(R.id.shareLayout);
         mLayout = findViewById(R.id.constraintLayout);
+        mTagLayout = findViewById(R.id.tagLayout);
 
         ParseUser currentUser = ParseUser.getCurrentUser();
 
@@ -185,6 +192,25 @@ public class IdeaDetailsActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        ArrayList<String> tags = mIdea.getTags();
+
+        if (tags != null) {
+            mTagLayout.removeAllViews();
+            for (int i = 0; i < tags.size(); i++) {
+                TextView tv = new TextView(this);
+                tv.setText(tags.get(i));
+                tv.setTextSize(16);
+                tv.setTextColor(Color.GRAY);
+                Typeface typeface = ResourcesCompat.getFont(this, R.font.lato_bold_italic);
+                tv.setTypeface(typeface);
+
+                Constraints.LayoutParams params = new Constraints.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(0, 0, 20, 0);
+                tv.setLayoutParams(params);
+                mTagLayout.addView(tv);
+            }
+        }
 
         setActionBarIcon();
     }

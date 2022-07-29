@@ -9,19 +9,6 @@
     app:cornerRadius="25dp"
     tools:context=".fragments.ProfileFragment">
 
-<!--    <TextView-->
-<!--        android:id="@+id/tvMediaSelectTitle"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        android:fontFamily="@font/visby_extra_bold"-->
-<!--        android:text="Brainstorm"-->
-<!--        android:textColor="#002447"-->
-<!--        android:textSize="35sp"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <com.example.onCreate.utilities.CustomEditText
         android:id="@+id/title"
         android:layout_width="match_parent"
@@ -51,70 +38,14 @@
         android:background="@color/white"
         android:fontFamily="@font/lato"
         android:hint="Add a description"
-        android:maxLines="4"
         android:maxLength="280"
+        android:maxLines="4"
         android:minLines="1"
         android:textColorHint="#888888"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
-
-
-    <!--        <com.google.android.material.textfield.TextInputLayout-->
-    <!--            android:id="@+id/description"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:backgroundTint="@color/white"-->
-    <!--            app:boxBackgroundColor="@color/white"-->
-    <!--            app:counterEnabled="true"-->
-    <!--            app:counterMaxLength="280"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toBottomOf="@+id/title">-->
-
-    <!--            <EditText-->
-    <!--                android:id="@+id/etDescription"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:layout_marginStart="30dp"-->
-    <!--                android:layout_marginEnd="30dp"-->
-    <!--                android:ems="10"-->
-    <!--                android:gravity="start|top"-->
-    <!--                android:hint="Description"-->
-    <!--                android:inputType="textMultiLine"-->
-    <!--                android:maxLines="4"-->
-    <!--                android:minLines="4"-->
-    <!--                app:counterEnabled="true" />-->
-    <!--        </com.google.android.material.textfield.TextInputLayout>-->
-
-    <!--        <com.google.android.material.textfield.TextInputLayout-->
-    <!--            android:id="@+id/tags"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:backgroundTint="@color/white"-->
-    <!--            app:boxBackgroundColor="@color/white"-->
-    <!--            app:counterEnabled="true"-->
-    <!--            app:counterMaxLength="35"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toBottomOf="@+id/description">-->
-
-    <!--            <EditText-->
-    <!--                android:id="@+id/etTags"-->
-    <!--                android:layout_width="match_parent"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:layout_marginStart="30dp"-->
-    <!--                android:layout_marginEnd="30dp"-->
-    <!--                android:ems="10"-->
-    <!--                android:gravity="start|top"-->
-    <!--                android:hint="Tags"-->
-    <!--                android:inputType="textMultiLine"-->
-    <!--                android:maxLines="1"-->
-    <!--                android:minLines="1"-->
-    <!--                app:counterEnabled="true" />-->
-    <!--        </com.google.android.material.textfield.TextInputLayout>-->
-
 
     <Button
         android:id="@+id/btnSubmit"
@@ -128,58 +59,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--        <RadioGroup-->
-    <!--            android:id="@+id/switchPrivateGlobal"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginStart="30dp"-->
-    <!--            android:layout_marginTop="30dp"-->
-    <!--            android:layout_marginEnd="24dp"-->
-    <!--            android:checkedButton="@+id/privateBtn"-->
-    <!--            android:orientation="horizontal"-->
-    <!--            app:layout_constraintCircleRadius="50dp"-->
-    <!--            app:layout_constraintEnd_toEndOf="parent"-->
-    <!--            app:layout_constraintStart_toStartOf="parent"-->
-    <!--            app:layout_constraintTop_toTopOf="parent">-->
-
-    <!--            <RadioButton-->
-    <!--                android:id="@+id/privateBtn"-->
-    <!--                android:layout_width="0dp"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:layout_marginLeft="3dp"-->
-    <!--                android:layout_marginTop="3dp"-->
-    <!--                android:layout_marginBottom="3dp"-->
-    <!--                android:layout_weight="1"-->
-    <!--                android:background="@drawable/control_switch_background_selector_middle"-->
-    <!--                android:button="@null"-->
-    <!--                android:fontFamily="sans-serif-medium"-->
-    <!--                android:gravity="center"-->
-    <!--                android:paddingTop="16dp"-->
-    <!--                android:paddingBottom="16dp"-->
-    <!--                android:text="Private"-->
-    <!--                android:textColor="@drawable/control_switch_color_selector" />-->
-
-    <!--            <RadioButton-->
-    <!--                android:id="@+id/globalBtn"-->
-    <!--                android:layout_width="0dp"-->
-    <!--                android:layout_height="match_parent"-->
-    <!--                android:layout_marginTop="3dp"-->
-    <!--                android:layout_marginBottom="3dp"-->
-    <!--                android:layout_weight="1"-->
-    <!--                android:background="@drawable/control_switch_background_selector_middle"-->
-    <!--                android:button="@null"-->
-    <!--                android:fontFamily="sans-serif-medium"-->
-    <!--                android:gravity="center"-->
-    <!--                android:paddingTop="16dp"-->
-    <!--                android:paddingBottom="16dp"-->
-    <!--                android:text="Global"-->
-    <!--                android:textColor="@drawable/control_switch_color_selector" />-->
-    <!--        </RadioGroup>-->
+    <com.github.angads25.toggle.widget.LabeledSwitch
+        android:id="@+id/visibilitySwitch"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:textSize="16sp"
+        app:colorBorder="@color/dark_blue_theme"
+        app:colorOn="@color/dark_blue_theme"
+        app:layout_constraintBottom_toBottomOf="@+id/btnSubmit"
+        app:layout_constraintEnd_toStartOf="@+id/btnSubmit"
+        app:layout_constraintStart_toEndOf="@+id/ivClose"
+        app:layout_constraintTop_toTopOf="@+id/btnSubmit"
+        app:on="true"
+        app:textOff="Global"
+        app:textOn="Private" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardImagePost"
         android:layout_width="250dp"
         android:layout_height="300dp"
+        android:layout_marginTop="30dp"
         android:visibility="gone"
         app:cardCornerRadius="30dp"
         app:layout_constraintBottom_toTopOf="@+id/layoutTagDisplay"
@@ -205,13 +104,13 @@
         android:id="@+id/mediaLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="45dp"
         android:background="@drawable/rounded_corners_gray"
         android:clickable="true"
         android:elevation="2dp"
         android:orientation="horizontal"
         android:padding="5dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginBottom="45dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -219,10 +118,10 @@
             android:id="@+id/ivMedia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_media"
-            app:tint="@drawable/share_icon_selector"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="2dp"/>
+            android:layout_marginStart="2dp"
+            app:srcCompat="@drawable/ic_media"
+            app:tint="@drawable/share_icon_selector" />
 
         <TextView
             android:id="@+id/tvMedia"
@@ -286,16 +185,23 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layoutTagDisplay"
+    <HorizontalScrollView
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/mediaLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"></LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layoutTagDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"/>
+    </HorizontalScrollView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
