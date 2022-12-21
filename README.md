@@ -182,4 +182,4 @@ Idea
 ## Gifs
 
 ### Demo
-<img src='https://github.com/Kiopsy/onCreate/blob/master/onCreate.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+Check out the video [here](https://www.youtube.com/watch?v=sNANoI8NWRI)
